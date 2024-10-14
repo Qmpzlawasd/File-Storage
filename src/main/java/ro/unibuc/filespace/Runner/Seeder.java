@@ -15,5 +15,6 @@ public class Seeder implements ApplicationRunner {
         seederHelper.createUser("user1", "string");
         seederHelper.createUser("user2", "string");
         seederHelper.createUser("user3", "string");
+        seederHelper.createUser("string", "string");
     }
 }

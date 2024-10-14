@@ -17,7 +17,7 @@ import java.util.Set;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long user_id;
+    private Long userId;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;

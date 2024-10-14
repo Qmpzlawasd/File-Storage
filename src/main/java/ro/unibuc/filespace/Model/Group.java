@@ -2,7 +2,9 @@ package ro.unibuc.filespace.Model;
 
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
@@ -11,10 +13,12 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "GROUPS")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private Long group_id;
+    private Long groupId;
 
     @Column(name = "group_name", nullable = false, unique = true)
     private String group_name;
@@ -27,4 +31,7 @@ public class Group {
     @JoinTable(name = "MEMBERSHIP", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
     private Set<User> users;
 
+    public Group(String group_name) {
+        this.group_name = group_name;
+    }
 }
