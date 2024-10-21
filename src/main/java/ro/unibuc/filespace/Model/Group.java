@@ -18,10 +18,11 @@ import java.util.Set;
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "groupId")
     private Long groupId;
 
-    @Column(name = "group_name", nullable = false, unique = true)
-    private String group_name;
+    @Column(name = "groupName", nullable = false, unique = true)
+    private String groupName;
 
     @ManyToMany
     @JoinTable(name = "STORAGE", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "file_id"), @JoinColumn(name = "user_id")})
@@ -32,6 +33,6 @@ public class Group {
     private Set<User> users;
 
     public Group(String group_name) {
-        this.group_name = group_name;
+        this.groupName = group_name;
     }
 }

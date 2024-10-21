@@ -45,6 +45,10 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> findUserById(long userId) {
+        return userRepository.findById(userId);
+    }
+
     private String getAuthenticatedUsername() {
         log.info("Getting authenticated user account");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

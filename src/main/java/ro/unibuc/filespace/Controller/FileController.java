@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.sqlite.FileException;
+import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
+import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Service.FileService;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,9 +24,9 @@ public class FileController {
 
     @RequestMapping(value = "/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) throws IOException,  FileException, UserNotInGroup, FileWithNameAlreadyExists {
 //        try {
-            uploadFile(groupId, file);
+            fileService.storeFile(groupId, file);
 //        } catch (Exception e) {
 //            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 //        }

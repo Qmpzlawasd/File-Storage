@@ -13,6 +13,7 @@ import org.hibernate.annotations.DynamicInsert;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
+@IdClass(MembershipId.class)
 public class Membership {
     @Id
     @ManyToOne
@@ -21,6 +22,6 @@ public class Membership {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "group_id", nullable = false)
     private User user;
 }

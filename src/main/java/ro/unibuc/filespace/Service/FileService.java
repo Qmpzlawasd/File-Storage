@@ -25,7 +25,7 @@ public class FileService {
     private final UserService userService;
 
 
-    void uploadFile(long groupId, MultipartFile file) throws GroupDoesNotExist, UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException {
+    public void storeFile(long groupId, MultipartFile file) throws GroupDoesNotExist, UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist{
         // check file not empty
         if (file.isEmpty()) {
             throw new FileException("File is empty");
@@ -46,6 +46,9 @@ public class FileService {
         // upload file
         File newFile = new File(file.getOriginalFilename(), thisUser, new String(file.getBytes(), StandardCharsets.UTF_8));
         fileRepository.save(newFile);
+
+        // TODO: LINK FILE TO GROUP
+
     }
 
     Optional<File> getFileFromGroup(long groupId, String fileName) {

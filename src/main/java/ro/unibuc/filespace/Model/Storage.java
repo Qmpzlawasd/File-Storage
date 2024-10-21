@@ -12,6 +12,7 @@ import lombok.Setter;
 @Table(name = "STORAGE")
 @AllArgsConstructor
 @NoArgsConstructor
+@IdClass(StorageId.class)
 public class Storage {
     @Id
     @ManyToOne
@@ -25,5 +26,4 @@ public class Storage {
             @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     })
     private File file;
-
 }
