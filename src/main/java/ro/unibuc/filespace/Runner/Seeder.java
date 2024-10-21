@@ -12,9 +12,6 @@ public class Seeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        seederHelper.createUser("user1", "string");
-        seederHelper.createUser("user2", "string");
-        seederHelper.createUser("user3", "string");
         seederHelper.createUser("string", "string");
     }
 }
