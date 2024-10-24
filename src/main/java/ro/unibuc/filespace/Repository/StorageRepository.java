@@ -8,5 +8,4 @@ import ro.unibuc.filespace.Model.StorageId;
 
 @Repository
 public interface StorageRepository extends CrudRepository<Storage, StorageId> {
-
 }

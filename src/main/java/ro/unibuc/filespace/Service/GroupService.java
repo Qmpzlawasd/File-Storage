@@ -39,13 +39,14 @@ public class GroupService {
         return groupRepository.findByGroupId(id).orElseThrow(GroupDoesNotExist::new);
     }
 
-    public void createGroup(String groupName) throws GroupAlreadyExists {
+    public Group createGroup(String groupName) throws GroupAlreadyExists {
         if (groupRepository.findByGroupName(groupName).isPresent()) {
             throw new GroupAlreadyExists();
         }
         Group newGroup = groupRepository.save(new Group(groupName));
         log.info("Created group with name {} and internal id {}", groupName, newGroup.getGroupId());
         this.addUserToGroup(userService.getAuthenticatedUser().getUserId(), newGroup.getGroupId());
+        return newGroup;
     }
 
     public List<User> getGroupUsers(long id) throws GroupDoesNotExist {

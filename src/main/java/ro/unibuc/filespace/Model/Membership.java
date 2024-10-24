@@ -22,6 +22,6 @@ public class Membership {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "group_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

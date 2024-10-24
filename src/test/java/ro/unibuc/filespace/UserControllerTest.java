@@ -2,8 +2,6 @@ package ro.unibuc.filespace;
 
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
-import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,16 +10,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.UserRepository;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest

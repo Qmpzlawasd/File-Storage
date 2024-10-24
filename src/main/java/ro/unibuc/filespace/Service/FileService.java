@@ -9,6 +9,7 @@ import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.GroupDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
+import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.FileRepository;
 
@@ -23,6 +24,7 @@ public class FileService {
     private final FileRepository fileRepository;
     private final GroupService groupService;
     private final UserService userService;
+    private final StorageService storageService;
 
 
     public void storeFile(long groupId, MultipartFile file) throws GroupDoesNotExist, UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist{
@@ -32,7 +34,7 @@ public class FileService {
         }
 
         // check group exists
-        groupService.getGroup(groupId);
+        Group thisGroup = groupService.getGroup(groupId);
 
         // check user is in group
         User thisUser = userService.getAuthenticatedUser();
@@ -45,10 +47,10 @@ public class FileService {
 
         // upload file
         File newFile = new File(file.getOriginalFilename(), thisUser, new String(file.getBytes(), StandardCharsets.UTF_8));
-        fileRepository.save(newFile);
+        File storedFile = fileRepository.save(newFile);
 
-        // TODO: LINK FILE TO GROUP
-
+        // add link between file and group
+        storageService.addFileToGroup(storedFile,thisGroup );
     }
 
     Optional<File> getFileFromGroup(long groupId, String fileName) {
