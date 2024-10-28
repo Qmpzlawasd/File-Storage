@@ -15,6 +15,7 @@ import ro.unibuc.filespace.Repository.FileRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +27,7 @@ public class FileService {
     private final UserService userService;
     private final StorageService storageService;
 
-
-    public void storeFile(long groupId, MultipartFile file) throws GroupDoesNotExist, UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist{
+    public File storeFile(long groupId, MultipartFile file, User user) throws UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist {
         // check file not empty
         if (file.isEmpty()) {
             throw new FileException("File is empty");
@@ -37,11 +37,11 @@ public class FileService {
         Group thisGroup = groupService.getGroup(groupId);
 
         // check user is in group
-        User thisUser = userService.getAuthenticatedUser();
+        User thisUser = user == null ? userService.getAuthenticatedUser() : user;
         groupService.getUserFromGroup(groupId, thisUser.getUserId()).orElseThrow(UserNotInGroup::new);
 
         // check file name already there
-        if (this.getFileFromGroup(groupId, file.getOriginalFilename()).isPresent()){
+        if (this.getFileFromGroup(groupId, file.getOriginalFilename()).isPresent()) {
             throw new FileWithNameAlreadyExists();
         }
 
@@ -50,10 +50,12 @@ public class FileService {
         File storedFile = fileRepository.save(newFile);
 
         // add link between file and group
-        storageService.addFileToGroup(storedFile,thisGroup );
+        storageService.addFileToGroup(storedFile, thisGroup);
+        return storedFile;
     }
 
     Optional<File> getFileFromGroup(long groupId, String fileName) {
+        
         return fileRepository.findByFileNameAndGroupId(groupId, fileName);
     }
 }

@@ -4,8 +4,12 @@ import jakarta.persistence.IdClass;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ro.unibuc.filespace.Exception.GroupDoesNotExist;
+import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.*;
 import ro.unibuc.filespace.Repository.MembershipRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -13,8 +17,13 @@ import ro.unibuc.filespace.Repository.MembershipRepository;
 @IdClass(MembershipId.class)
 public class MembershipService {
     private final MembershipRepository  membershipRepository;
+    private final UserService userService;
 
     public void createMembership(Group group, User user) {
         membershipRepository.save(new Membership(group, user));
+    }
+
+    public List<User> getUsersInGroup(long groupId) throws UserNotInGroup {
+        return membershipRepository.getUsersInGroup(groupId);
     }
 }

@@ -1,5 +1,9 @@
 package ro.unibuc.filespace.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +30,7 @@ public class File {
     private String file_name;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -39,7 +43,7 @@ public class File {
         this.file_content = file_content;
     }
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "files")
     private Set<Group> groups;
-
 }

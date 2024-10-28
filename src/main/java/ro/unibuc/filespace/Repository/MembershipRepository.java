@@ -5,12 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import ro.unibuc.filespace.Model.FileId;
-import ro.unibuc.filespace.Model.Membership;
-import ro.unibuc.filespace.Model.MembershipId;
-import ro.unibuc.filespace.Model.Storage;
+import ro.unibuc.filespace.Model.*;
+
+import java.util.List;
 
 @Repository
 public interface MembershipRepository extends CrudRepository<Membership, MembershipId> {
-
+    @Query("SELECT m.user from Membership m where m.group.groupId = :groupId")
+    List<User> getUsersInGroup(long groupId);
 }

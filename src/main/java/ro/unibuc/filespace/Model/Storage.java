@@ -15,12 +15,12 @@ import lombok.Setter;
 @IdClass(StorageId.class)
 public class Storage {
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumns({
             @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false),
             @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)

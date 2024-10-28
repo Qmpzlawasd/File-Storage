@@ -1,26 +1,21 @@
 package ro.unibuc.filespace.Service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.sqlite.SQLiteException;
+import ro.unibuc.filespace.Configuration.AuthConfig;
 import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Exception.UserAlreadyExists;
 import ro.unibuc.filespace.Exception.UserDoesNotExist;
 import ro.unibuc.filespace.Exception.UserWrongPassword;
+import ro.unibuc.filespace.Helper.EncryptionHelper;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.UserRepository;
 
-import java.nio.file.Files;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -68,5 +63,4 @@ public class UserService {
     public User getAuthenticatedUser() throws UserDoesNotExist {
         return userRepository.findByUsername(this.getAuthenticatedUsername()).orElseThrow(UserDoesNotExist::new);
     }
-
 }

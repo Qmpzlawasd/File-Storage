@@ -15,9 +15,6 @@ public interface GroupRepository extends CrudRepository<Group, Long> {
 
      Optional<Group> findByGroupName(String GroupName);
 
-     @Query("SELECT User from Membership where group.groupId = :groupId")
-     List<User> getUsersInGroup(long groupId);
-
      @Query("SELECT m.user FROM Membership m WHERE m.group.groupId = :groupId AND m.user.userId = :userId")
      Optional<User> findUserInGroup(long groupId, long userId);
 }

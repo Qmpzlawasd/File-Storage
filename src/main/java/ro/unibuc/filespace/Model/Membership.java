@@ -16,12 +16,12 @@ import org.hibernate.annotations.DynamicInsert;
 @IdClass(MembershipId.class)
 public class Membership {
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "group_id", nullable = false)
     private Group group;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

@@ -58,7 +58,6 @@ import java.util.List;
 
 @Configuration
 public class AuthConfig {
-
     @Value("${jwt.public.key}")
     private String publicKeyPath;
 
@@ -69,7 +68,7 @@ public class AuthConfig {
         return Files.readString(Paths.get(path))
                 .replaceAll("-----BEGIN (.*) KEY-----", "")
                 .replaceAll("-----END (.*) KEY-----", "")
-                .replaceAll("\\s", ""); // Remove newlines or spaces
+                .replaceAll("\\s", "");
     }
 
     @Bean

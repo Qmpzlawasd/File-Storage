@@ -1,5 +1,6 @@
 package ro.unibuc.filespace.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Table(name = "USERS")
 public class User implements UserDetails {
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "userId")
     private Long userId;
@@ -23,12 +25,15 @@ public class User implements UserDetails {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private Set<Group> groups;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<File> files;
 

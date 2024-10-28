@@ -1,7 +1,6 @@
 package ro.unibuc.filespace;
 
 import jakarta.transaction.Transactional;
-import org.hibernate.validator.internal.constraintvalidators.bv.AssertFalseValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,7 +11,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import ro.unibuc.filespace.Model.Group;
-import ro.unibuc.filespace.Model.StorageId;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.FileRepository;
 import ro.unibuc.filespace.Repository.GroupRepository;
@@ -22,7 +20,6 @@ import ro.unibuc.filespace.Service.GroupService;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
