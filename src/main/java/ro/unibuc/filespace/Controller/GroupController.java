@@ -30,40 +30,21 @@ public class GroupController {
     @RequestMapping(value = "/{groupId}/list_members", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<User>> getUsersInGroup(@PathVariable long groupId) throws UserNotInGroup {
-        List<User> users;
-        try {
-            users = groupService.getGroupUsers(groupId);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        List<User> users = groupService.getGroupUsers(groupId);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/invite")
     public ResponseEntity<String> invite(@RequestParam String groupName, @RequestParam String username) throws Exception {
-//        try {
-            String invite = groupService.generateInvitation(groupName , username);
-            return ResponseEntity.ok(invite);
-//        }
-//        catch (UserDoesNotExist e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        catch (UserNotInGroup e) {
-//            return ResponseEntity.badRequest().build();
-//        }
-//        catch (GroupDoesNotExist e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        catch (Exception e) {
-//            return ResponseEntity.badRequest().build();
-//        }
+        String invite = groupService.generateInvitation(groupName, username);
+        return ResponseEntity.ok(invite);
     }
 
     @GetMapping("/accept_invite")
     public ResponseEntity<Void> acceptInvite(@RequestParam String inviteToken) {
         try {
-        groupService.acceptInvitation(inviteToken);
-        return ResponseEntity.ok().build();
+            groupService.acceptInvitation(inviteToken);
+            return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

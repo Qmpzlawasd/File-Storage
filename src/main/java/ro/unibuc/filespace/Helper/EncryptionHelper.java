@@ -2,9 +2,9 @@ package ro.unibuc.filespace.Helper;
 
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ro.unibuc.filespace.Configuration.AuthConfig;
+import ro.unibuc.filespace.Dto.InvitationDto;
+import ro.unibuc.filespace.Exception.InvitationExpired;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -13,15 +13,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.InvalidKeyException;
 import java.security.KeyFactory;
-import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.*;
-import java.util.Arrays;
 import java.util.Base64;
 
 @Configuration
@@ -32,14 +29,24 @@ public class EncryptionHelper {
     @Value("${jwt.public.key}")
     private String publicKeyPath;
 
+    @Value("${invite.expiration.minutes}")
+    private long inviteExpirationMinutes;
+
     @Value("${aes.key}")
     private String keyString;
 
-    private String buildInvitationString(String groupName, String userName) throws Exception {
-        return String.format("%s|%s|%s", Instant.now().plusSeconds(30 * 60), groupName, userName);
+    private void checkInviteTimestamp(String expirationTime) {
+        Instant expiration = Instant.parse(expirationTime);
+        if (Instant.now().isAfter(expiration)) {
+            throw new InvitationExpired();
+        }
     }
 
-    public boolean decodeInvitation(String base64RsaAesInviteString) throws Exception {
+    private String buildInvitationString(String groupName, String userName) throws Exception {
+        return String.format("%s|%s|%s", Instant.now().plusSeconds(60 * inviteExpirationMinutes), groupName, userName);
+    }
+
+    public InvitationDto decodeInvitation(String base64RsaAesInviteString) throws Exception {
         byte[] rsaAesInviteString = Base64.getDecoder().decode(base64RsaAesInviteString);
 
         Cipher rsaCipher = Cipher.getInstance("RSA");
@@ -61,14 +68,11 @@ public class EncryptionHelper {
         }
 
         String expirationTimeString = parts[0];
-        String groupName = parts[1];
-        String userName = parts[2];
+        checkInviteTimestamp(expirationTimeString);
 
-        Instant expirationTime = Instant.parse(expirationTimeString);
-        if (Instant.now().isAfter(expirationTime)) {
-            throw new IllegalArgumentException("invite expired");
-        }
-        return true;
+        String groupName = parts[1];
+        String username = parts[2];
+        return new InvitationDto(username, groupName);
     }
 
     public String encodeInvitation(String groupName, String userName) throws Exception {
@@ -89,12 +93,6 @@ public class EncryptionHelper {
         byte[] rsaAesInviteString = rsaCipher.doFinal(aesInviteString);
 
         return Base64.getEncoder().encodeToString(rsaAesInviteString);
-    }
-
-    private PublicKey getPublicKeyFromEncoded(byte[] publicKeyBytes) throws Exception {
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(spec);
     }
 
     private String readKeyFile(String path) throws IOException {

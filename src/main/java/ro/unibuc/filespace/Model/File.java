@@ -26,7 +26,7 @@ public class File {
     @Column(name = "file_id", nullable = false, unique = true)
     private Long fileId;
 
-    @Column(name = "file_name", nullable = false, unique = true)
+    @Column(name = "file_name", nullable = false)
     private String file_name;
 
     @Id
@@ -36,6 +36,9 @@ public class File {
 
     @Column(name = "file_content", nullable = false)
     private String file_content;
+
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
 
     public File(String file_name, User user, String file_content) {
         this.file_name = file_name;

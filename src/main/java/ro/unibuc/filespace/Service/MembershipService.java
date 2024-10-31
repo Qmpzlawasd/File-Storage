@@ -17,7 +17,6 @@ import java.util.List;
 @IdClass(MembershipId.class)
 public class MembershipService {
     private final MembershipRepository  membershipRepository;
-    private final UserService userService;
 
     public void createMembership(Group group, User user) {
         membershipRepository.save(new Membership(group, user));

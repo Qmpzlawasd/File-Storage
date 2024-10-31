@@ -3,6 +3,7 @@ package ro.unibuc.filespace.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ro.unibuc.filespace.Dto.InvitationDto;
 import ro.unibuc.filespace.Exception.GroupAlreadyExists;
 import ro.unibuc.filespace.Exception.GroupDoesNotExist;
 import ro.unibuc.filespace.Exception.UserDoesNotExist;
@@ -27,19 +28,19 @@ public class GroupService {
 
     private final MembershipService membershipService;
 
-    public void addUserToGroup(long userId, long groupId) throws GroupDoesNotExist, UserDoesNotExist {
-        Group thisGroup = groupRepository.findByGroupId(groupId).orElseThrow(GroupDoesNotExist::new);
-        User thisUser = userService.findUserById(userId).orElseThrow(UserDoesNotExist::new);
+    public void addUserToGroup(User user, Group group) throws GroupDoesNotExist, UserDoesNotExist {
+        Group thisGroup = groupRepository.findByGroupId(group.getGroupId()).orElseThrow(GroupDoesNotExist::new);
+        User thisUser = userService.findUserById(user.getUserId()).orElseThrow(UserDoesNotExist::new);
 
-        if (groupRepository.findUserInGroup(groupId, userId).isPresent()) {
-            log.info("User with id {} is already in group with id {}", userId, groupId);
+        if (groupRepository.findUserInGroup(group.getGroupId(), user.getUserId()).isPresent()) {
+            log.info("User with id {} is already in group with id {}", user.getUserId(), group.getGroupId());
             return;
         }
         membershipService.createMembership(thisGroup, thisUser);
     }
 
-    public Group getGroup(long id) throws GroupDoesNotExist {
-        return groupRepository.findByGroupId(id).orElseThrow(GroupDoesNotExist::new);
+    public Optional<Group> getGroup(long id) throws GroupDoesNotExist {
+        return groupRepository.findByGroupId(id);
     }
 
     public Optional<Group> getGroup(String groupName) throws GroupDoesNotExist {
@@ -52,7 +53,7 @@ public class GroupService {
         }
         Group newGroup = groupRepository.save(new Group(groupName));
         log.info("Created group in seeder with name {} and internal id {}", groupName, newGroup.getGroupId());
-        this.addUserToGroup(user.getUserId(), newGroup.getGroupId());
+        this.addUserToGroup(user, newGroup);
         return newGroup;
     }
 
@@ -62,7 +63,7 @@ public class GroupService {
         }
         Group newGroup = groupRepository.save(new Group(groupName));
         log.info("Created group with name {} and internal id {}", groupName, newGroup.getGroupId());
-        this.addUserToGroup(userService.getAuthenticatedUser().getUserId(), newGroup.getGroupId());
+        this.addUserToGroup(userService.getAuthenticatedUser(), newGroup);
         return newGroup;
     }
 
@@ -82,10 +83,13 @@ public class GroupService {
         return encryptionHelper.encodeInvitation(groupName, username);
     }
 
-    public boolean acceptInvitation(String token) throws Exception {
-        // check user in invite is actual user
-
-        return encryptionHelper.decodeInvitation(token);
+    public void acceptInvitation(String token) throws Exception {
+        InvitationDto receivedInvite = encryptionHelper.decodeInvitation(token);
+        if (!receivedInvite.getUsername().equals(userService.getAuthenticatedUser().getUsername())) {
+            throw new RuntimeException("Invite does not match this user");
+        }
+        Group invitedGroup = getGroup(receivedInvite.getGroupName()).orElseThrow(GroupDoesNotExist::new);
+        addUserToGroup(userService.getAuthenticatedUser(), invitedGroup);
     }
 }
 

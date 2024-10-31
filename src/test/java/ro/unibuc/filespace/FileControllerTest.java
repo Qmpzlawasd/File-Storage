@@ -84,7 +84,7 @@ public class FileControllerTest {
     @Test
     void uploadFileRequest_invalidFileName_badRequest() throws Exception {
         Group newGroup = groupRepository.save(new Group("group1"));
-        groupService.addUserToGroup(this.user.getUserId(), newGroup.getGroupId());
+        groupService.addUserToGroup(this.user, newGroup);
 
         MockMultipartFile multipartFile1 = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test1".getBytes());
         mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile1))
@@ -98,7 +98,7 @@ public class FileControllerTest {
     @Test
     void uploadFileRequest_validData_fileCreated() throws Exception {
         Group newGroup = groupRepository.save(new Group("group1"));
-        groupService.addUserToGroup(this.user.getUserId(), newGroup.getGroupId());
+        groupService.addUserToGroup(this.user, newGroup);
 
         String fileName = "nameoffile1";
         MockMultipartFile multipartFile = new MockMultipartFile("file", fileName, "application/octet-stream", "test1".getBytes());

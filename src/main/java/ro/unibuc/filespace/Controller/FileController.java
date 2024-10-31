@@ -11,9 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
+import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
+import ro.unibuc.filespace.Repository.FileRepository;
 import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.StorageService;
 
@@ -39,13 +41,16 @@ public class FileController {
 
     @RequestMapping(value = "/{groupId}/files", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<File>> getGroupFiles(@PathVariable long groupId) {
+    public ResponseEntity<List<File>> getGroupFiles(@PathVariable long groupId) throws UserNotInGroup {
         List<File> files;
-        try {
-            files = storageService.getFilesFromGroup(groupId);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        files = storageService.getFilesFromGroup(groupId);
         return ResponseEntity.ok(files);
+    }
+
+    @RequestMapping(value = "/{groupId}/delete_file", method = RequestMethod.DELETE)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteFile(@PathVariable long groupId,@RequestParam String fileName) throws FileDoesNotExist, UserNotInGroup {
+        fileService.deleteFileFromGroup(groupId, fileName);
+        return ResponseEntity.ok().build();
     }
 }

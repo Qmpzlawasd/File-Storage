@@ -1,5 +1,6 @@
 package ro.unibuc.filespace.Repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.scheduling.annotation.Async;
@@ -14,6 +15,11 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends CrudRepository<File, FileId> {
     @Transactional(readOnly = true)
-    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.file.fileId where f.file_name = :fileName and s.group.groupId = :groupId")
+    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.file.fileId where f.file_name = :fileName and s.group.groupId = :groupId and s.file.isDeleted = false")
     Optional<File> findByFileNameAndGroupId(long groupId, String fileName);
+
+    @Transactional(readOnly = true)
+    @Modifying
+    @Query("update File f set f.isDeleted = true where f.fileId = :fileId")
+    void setFileToDeleted(long fileId);
 }

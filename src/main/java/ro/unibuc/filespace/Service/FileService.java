@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
+import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.GroupDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
@@ -15,7 +16,6 @@ import ro.unibuc.filespace.Repository.FileRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -34,7 +34,7 @@ public class FileService {
         }
 
         // check group exists
-        Group thisGroup = groupService.getGroup(groupId);
+        Group thisGroup = groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new);
 
         // check user is in group
         User thisUser = user == null ? userService.getAuthenticatedUser() : user;
@@ -54,8 +54,14 @@ public class FileService {
         return storedFile;
     }
 
-    Optional<File> getFileFromGroup(long groupId, String fileName) {
-        
+    public void deleteFileFromGroup(long groupId, String fileName) throws FileDoesNotExist, GroupDoesNotExist, UserNotInGroup {
+        groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new);
+        groupService.getUserFromGroup(groupId, userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
+        File thisFile = this.getFileFromGroup(groupId, fileName).orElseThrow(FileDoesNotExist::new);
+        fileRepository.setFileToDeleted(thisFile.getFileId());
+    }
+
+    public Optional<File> getFileFromGroup(long groupId, String fileName) {
         return fileRepository.findByFileNameAndGroupId(groupId, fileName);
     }
 }
