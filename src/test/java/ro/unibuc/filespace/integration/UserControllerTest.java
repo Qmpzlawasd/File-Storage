@@ -1,4 +1,4 @@
-package ro.unibuc.filespace;
+package ro.unibuc.filespace.integration;
 
 
 import jakarta.transaction.Transactional;

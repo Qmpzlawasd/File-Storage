@@ -5,8 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ro.unibuc.filespace.Exception.GroupDoesNotExist;
-import ro.unibuc.filespace.Exception.UserDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Service.GroupService;

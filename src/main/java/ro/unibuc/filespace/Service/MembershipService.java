@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ro.unibuc.filespace.Exception.GroupDoesNotExist;
+import ro.unibuc.filespace.Exception.UserDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.*;
 import ro.unibuc.filespace.Repository.MembershipRepository;
@@ -24,5 +25,9 @@ public class MembershipService {
 
     public List<User> getUsersInGroup(long groupId) throws UserNotInGroup {
         return membershipRepository.getUsersInGroup(groupId);
+    }
+
+    public List<Group> getJoinedGroups(User user) throws UserDoesNotExist {
+        return membershipRepository.getGroupsFromUser(user.getUserId());
     }
 }

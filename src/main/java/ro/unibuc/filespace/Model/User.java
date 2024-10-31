@@ -1,6 +1,7 @@
 package ro.unibuc.filespace.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
@@ -23,6 +24,7 @@ public class User implements UserDetails {
     private Long userId;
 
     @Column(name = "username", nullable = false, unique = true)
+    @Size(min = 2,max = 20, message = "Username cannot be shorter than 2 or longer than 20")
     private String username;
 
     @JsonIgnore

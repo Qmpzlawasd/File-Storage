@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ public class Group {
     @Column(name = "groupId")
     private Long groupId;
 
+    @Size(min = 2, max = 40, message = "Group name cannot be shorter than 2 or longer than 40")
     @Column(name = "groupName", nullable = false, unique = true)
     private String groupName;
 

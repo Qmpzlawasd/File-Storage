@@ -1,4 +1,4 @@
-package ro.unibuc.filespace;
+package ro.unibuc.filespace.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +18,6 @@ import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.GroupService;
 import ro.unibuc.filespace.Service.UserService;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

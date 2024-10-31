@@ -7,12 +7,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ro.unibuc.filespace.Configuration.AuthConfig;
 import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Exception.UserAlreadyExists;
 import ro.unibuc.filespace.Exception.UserDoesNotExist;
 import ro.unibuc.filespace.Exception.UserWrongPassword;
-import ro.unibuc.filespace.Helper.EncryptionHelper;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.UserRepository;
 
