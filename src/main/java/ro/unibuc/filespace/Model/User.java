@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private Long userId;
 
     @Column(name = "username", nullable = false, unique = true)
-    @Size(min = 2,max = 20, message = "Username cannot be shorter than 2 or longer than 20")
+    @Size(min = 2, max = 20, message = "Username cannot be shorter than 2 or longer than 20")
     private String username;
 
     @JsonIgnore
@@ -40,6 +40,12 @@ public class User implements UserDetails {
     private List<File> files;
 
     public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public User(long userId, String username, String password) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
     }

@@ -83,7 +83,7 @@ public class FileControllerTest {
 
     @Test
     void uploadFileRequest_invalidFileName_badRequest() throws Exception {
-        Group newGroup = groupRepository.save(new Group("group1"));
+        Group newGroup = groupRepository.save(new Group("group2"));
         groupService.addUserToGroup(this.user, newGroup);
 
         MockMultipartFile multipartFile1 = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test1".getBytes());
@@ -97,7 +97,7 @@ public class FileControllerTest {
 
     @Test
     void uploadFileRequest_validData_fileCreated() throws Exception {
-        Group newGroup = groupRepository.save(new Group("group1"));
+        Group newGroup = groupRepository.save(new Group("group2"));
         groupService.addUserToGroup(this.user, newGroup);
 
         String fileName = "nameoffile1";

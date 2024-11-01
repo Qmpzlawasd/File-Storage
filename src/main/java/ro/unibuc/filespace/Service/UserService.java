@@ -42,7 +42,7 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    private String getAuthenticatedUsername() {
+    public String getAuthenticatedUsername() {
         log.info("Getting authenticated user account");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
