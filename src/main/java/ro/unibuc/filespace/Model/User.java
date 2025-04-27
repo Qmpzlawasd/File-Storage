@@ -20,7 +20,7 @@ public class User implements UserDetails {
     @Id
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private Long userId;
 
     @Column(name = "username", nullable = false, unique = true)

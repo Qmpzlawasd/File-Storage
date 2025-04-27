@@ -13,7 +13,6 @@ import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.FileRepository;
 import ro.unibuc.filespace.Service.*;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -67,8 +66,8 @@ public class FileServiceTest {
         File storedFile = fileService.storeFile(groupId, multipartFile, user);
 
         assertNotNull(storedFile);
-        assertEquals(fileName, storedFile.getFile_name());
-        assertEquals("file content", storedFile.getFile_content());
+        assertEquals(fileName, storedFile.getFileName());
+        assertEquals("file content", storedFile.getFileContent());
         verify(storageService, times(1)).addFileToGroup(storedFile, group);
     }
 
@@ -143,6 +142,6 @@ public class FileServiceTest {
         Optional<File> result = fileService.getFileFromGroup(groupId, fileName);
 
         assertTrue(result.isPresent());
-        assertEquals(fileName, result.get().getFile_name());
+        assertEquals(fileName, result.get().getFileName());
     }
 }

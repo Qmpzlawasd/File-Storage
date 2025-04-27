@@ -1,25 +1,19 @@
 package ro.unibuc.filespace.Controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
-import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
-import ro.unibuc.filespace.Repository.FileRepository;
+import ro.unibuc.filespace.Service.FileMetadataService;
 import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.StorageService;
 
-import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,12 +21,14 @@ import java.util.List;
 public class FileController {
     private final FileService fileService;
     private final StorageService storageService;
+    private final FileMetadataService fileMetadataService;
 
     @RequestMapping(value = "/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) {
         try {
-            fileService.storeFile(groupId, file, null);
+            File storedFile = fileService.storeFile(groupId, file, null);
+            fileMetadataService.storeFileMetadata(storedFile);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -49,7 +45,7 @@ public class FileController {
 
     @RequestMapping(value = "/{groupId}/delete_file", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> deleteFile(@PathVariable long groupId,@RequestParam String fileName) throws FileDoesNotExist, UserNotInGroup {
+    public ResponseEntity<Void> deleteFile(@PathVariable long groupId, @RequestParam String fileName) throws FileDoesNotExist, UserNotInGroup {
         fileService.deleteFileFromGroup(groupId, fileName);
         return ResponseEntity.ok().build();
     }

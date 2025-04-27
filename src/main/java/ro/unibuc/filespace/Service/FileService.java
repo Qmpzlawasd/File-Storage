@@ -64,4 +64,8 @@ public class FileService {
     public Optional<File> getFileFromGroup(long groupId, String fileName) {
         return fileRepository.findByFileNameAndGroupId(groupId, fileName);
     }
+
+    public Optional<File> getFileFromGroupById(long groupId, long fileId) {
+        return fileRepository.findByFileIdAndGroupId(groupId, fileId);
+    }
 }
