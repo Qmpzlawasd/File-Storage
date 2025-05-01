@@ -39,12 +39,8 @@ public class GroupController {
     }
 
     @GetMapping("/accept_invite")
-    public ResponseEntity<Void> acceptInvite(@RequestParam String inviteToken) {
-        try {
+    public ResponseEntity<Void> acceptInvite(@RequestParam String inviteToken) throws Exception {
             groupService.acceptInvitation(inviteToken);
             return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 }

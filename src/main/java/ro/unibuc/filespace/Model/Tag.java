@@ -35,7 +35,8 @@ public class Tag {
     })
     private Set<File> files;
 
-    public Tag(String group_name) {
-        this.tagName = group_name;
+    public Tag(String tagName, File file) {
+        this.tagName = tagName;
+        this.files = Set.of(file);
     }
 }

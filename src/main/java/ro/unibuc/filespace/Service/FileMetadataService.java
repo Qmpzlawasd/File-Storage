@@ -3,6 +3,9 @@ package ro.unibuc.filespace.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ro.unibuc.filespace.Exception.FileDoesNotExist;
+import ro.unibuc.filespace.Exception.FileMetadataNotPresent;
+import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.FileMetadata;
 import ro.unibuc.filespace.Repository.FileMetadataRepository;
@@ -15,23 +18,33 @@ import java.util.zip.Checksum;
 @Slf4j
 public class FileMetadataService {
     private final FileMetadataRepository fileMetadataRepository;
+    private final FileService fileService;
 
-    public void storeFileMetadata(File file) {
-        final String thisFileName = file.getFileName();
-        final String thisFileContent = file.getFileContent();
-
-        String thisExtension = null;
-        int i = thisFileName.lastIndexOf('.');
-        if (i > 0) {
-            thisExtension = thisFileName.substring(i + 1);
-        }
-
-        fileMetadataRepository.save(new FileMetadata(file, thisExtension, thisFileContent.length(), getCRC32Checksum(thisFileContent.getBytes())));
+    public FileMetadata getFileMetadata(long groupId, long fileId) throws UserNotInGroup, FileDoesNotExist, FileMetadataNotPresent {
+        fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
+        return fileMetadataRepository.findFileMetadata(fileId).orElseThrow(FileMetadataNotPresent::new);
     }
 
-    private static long getCRC32Checksum(byte[] fileBytes) {
+    public void storeFileMetadata(File file) {
+        String fileName = file.getFileName();
+        String fileContent = file.getFileContent();
+
+        String extension = extractExtension(fileName);
+        int size = fileContent.length();
+        long checksum = computeCRC32Checksum(fileContent.getBytes());
+
+        log.info("Storing metadata for file: {}", fileName);
+        fileMetadataRepository.save(new FileMetadata(file, extension, size, checksum));
+    }
+
+    private String extractExtension(String fileName) {
+        int index = fileName.lastIndexOf('.');
+        return (index > 0) ? fileName.substring(index + 1) : null;
+    }
+
+    private long computeCRC32Checksum(byte[] data) {
         Checksum crc32 = new CRC32();
-        crc32.update(fileBytes, 0, fileBytes.length);
+        crc32.update(data, 0, data.length);
         return crc32.getValue();
     }
 }

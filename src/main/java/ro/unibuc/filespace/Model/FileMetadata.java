@@ -1,5 +1,6 @@
 package ro.unibuc.filespace.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 public class FileMetadata {
     @Id
     @ManyToOne
+    @JsonIgnore
     @JoinColumns({
             @JoinColumn(name = "file_id", referencedColumnName = "file_id"),
             @JoinColumn(name = "user_id", referencedColumnName = "user_id")

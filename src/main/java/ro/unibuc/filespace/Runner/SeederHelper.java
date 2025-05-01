@@ -91,7 +91,7 @@ public class SeederHelper {
 
     }
 
-    File createFile(Group group, MultipartFile file, User user) throws GroupAlreadyExists, FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
-        return fileService.storeFile(group.getGroupId(), file, user);
+    File createFile(Group group, MultipartFile file) throws GroupAlreadyExists, FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
+        return fileService.storeFile(group.getGroupId(), file);
     }
 }

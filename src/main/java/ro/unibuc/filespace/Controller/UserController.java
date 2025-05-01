@@ -24,19 +24,15 @@ public class UserController {
 
     @GetMapping("/list_groups")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<Group>> listGroups() throws Exception {
+    public ResponseEntity<List<Group>> listGroups() {
         List<Group> groups = membershipService.getJoinedGroups(userService.getAuthenticatedUser());
         return ResponseEntity.ok(groups);
     }
 
-    @PostMapping("/users")
+    @PostMapping("/sign-up")
     public ResponseEntity<Void> createAccount(@RequestBody UserDataDto createUserDto) {
         log.info("Attempting to create account with username {} and password {}", createUserDto.getUsername(), createUserDto.getPassword());
-        try {
             userService.createUser(createUserDto.getUsername(), createUserDto.getPassword());
             return ResponseEntity.status(HttpStatus.CREATED).build();
-        } catch (UserAlreadyExists e) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 }

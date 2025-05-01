@@ -12,6 +12,7 @@ import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
+import ro.unibuc.filespace.Repository.FileMetadataRepository;
 import ro.unibuc.filespace.Repository.FileRepository;
 
 import java.io.IOException;
@@ -27,7 +28,7 @@ public class FileService {
     private final UserService userService;
     private final StorageService storageService;
 
-    public File storeFile(long groupId, MultipartFile file, User user) throws UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist {
+    public File storeFile(long groupId, MultipartFile file) throws UserNotInGroup, IOException, FileWithNameAlreadyExists, FileException, GroupDoesNotExist {
         // check file not empty
         if (file.isEmpty()) {
             throw new FileException("File is empty");
@@ -37,7 +38,7 @@ public class FileService {
         Group thisGroup = groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new);
 
         // check user is in group
-        User thisUser = user == null ? userService.getAuthenticatedUser() : user;
+        User thisUser =  userService.getAuthenticatedUser() ;
         groupService.getUserFromGroup(groupId, thisUser.getUserId()).orElseThrow(UserNotInGroup::new);
 
         // check file name already there
@@ -48,6 +49,7 @@ public class FileService {
         // upload file
         File newFile = new File(file.getOriginalFilename(), thisUser, new String(file.getBytes(), StandardCharsets.UTF_8));
         File storedFile = fileRepository.save(newFile);
+
 
         // add link between file and group
         storageService.addFileToGroup(storedFile, thisGroup);
@@ -61,11 +63,13 @@ public class FileService {
         fileRepository.setFileToDeleted(thisFile.getFileId());
     }
 
-    public Optional<File> getFileFromGroup(long groupId, String fileName) {
+    public Optional<File> getFileFromGroup(long groupId, String fileName) throws UserNotInGroup {
+        groupService.getUserFromGroup(groupId, userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
         return fileRepository.findByFileNameAndGroupId(groupId, fileName);
     }
 
-    public Optional<File> getFileFromGroupById(long groupId, long fileId) {
+    public Optional<File> getFileFromGroupById(long groupId, long fileId) throws UserNotInGroup {
+        groupService.getUserFromGroup(groupId, userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
         return fileRepository.findByFileIdAndGroupId(groupId, fileId);
     }
 }

@@ -3,6 +3,8 @@ package ro.unibuc.filespace.Runner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
@@ -12,6 +14,7 @@ import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
 
 import java.io.IOException;
+import java.util.Collections;
 
 
 @RequiredArgsConstructor
@@ -26,7 +29,11 @@ public class Seeder implements ApplicationRunner {
         User user3 = seederHelper.createUser("user3", "string");
 
         Group group1 = seederHelper.createGroup("group1", user1);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user1, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
-        File file1 = seederHelper.createFile(group1, seederHelper.createMockMultipartFile("asd" , "asd".getBytes()), user1);
+        File file1 = seederHelper.createFile(group1, seederHelper.createMockMultipartFile("asd", "asd".getBytes()));
+
+        SecurityContextHolder.clearContext();
     }
 }

@@ -3,10 +3,6 @@ package ro.unibuc.filespace.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.GroupDoesNotExist;
@@ -31,7 +27,7 @@ public class CommentService {
     private final StorageService storageService;
     private final FileService fileService;
 
-    public Comment addComment(long groupId, long fileId, long parentId, String commentContent) throws FileDoesNotExist {
+    public Comment addComment(long groupId, long fileId, long parentId, String commentContent) throws FileDoesNotExist, UserNotInGroup {
         File file = fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
         return commentRepository.save(new Comment(commentContent, file, userService.getAuthenticatedUser(), parentId, LocalDateTime.now()));
     }

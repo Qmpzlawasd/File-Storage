@@ -10,12 +10,12 @@ import org.hibernate.annotations.DynamicInsert;
 @Getter
 @Setter
 @Entity
-@Table(name = "FILE_TAGS")
+@Table(name = "FILE_TAG")
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
 @IdClass(FileTagId.class)
-public class FileTags {
+public class FileTag {
     @Id
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "tag_id", nullable = false)
