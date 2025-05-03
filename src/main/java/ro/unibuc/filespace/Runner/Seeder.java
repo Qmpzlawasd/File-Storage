@@ -33,7 +33,7 @@ public class Seeder implements ApplicationRunner {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         File file1 = seederHelper.createFile(group1, seederHelper.createMockMultipartFile("asd", "asd".getBytes()));
-
+        seederHelper.storeFileMetadata(file1);
         SecurityContextHolder.clearContext();
     }
 }

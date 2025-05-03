@@ -13,6 +13,7 @@ import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
+import ro.unibuc.filespace.Service.FileMetadataService;
 import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.GroupService;
 import ro.unibuc.filespace.Service.UserService;
@@ -28,6 +29,7 @@ public class SeederHelper {
     private final UserService userService;
     private final GroupService groupService;
     private final FileService fileService;
+    private final FileMetadataService fileMetadataService;
 
     User createUser(String username, String password) throws UserAlreadyExists {
         return userService.createUser(username, password);
@@ -93,5 +95,9 @@ public class SeederHelper {
 
     File createFile(Group group, MultipartFile file) throws GroupAlreadyExists, FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
         return fileService.storeFile(group.getGroupId(), file);
+    }
+
+    void storeFileMetadata(File file) {
+        fileMetadataService.storeFileMetadata(file);
     }
 }

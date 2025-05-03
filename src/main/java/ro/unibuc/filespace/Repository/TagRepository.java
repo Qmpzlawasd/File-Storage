@@ -7,7 +7,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import ro.unibuc.filespace.Model.Tag;
 
+import java.util.List;
+
 @Repository
 public interface TagRepository extends CrudRepository<Tag, Long> {
-
 }

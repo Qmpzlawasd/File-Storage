@@ -20,7 +20,7 @@ public class FileMetadataController {
 
     @RequestMapping(value = "/{groupId}/files/{fileId}", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<FileMetadata> getGroupFiles(@PathVariable long groupId, @PathVariable long fileId) throws FileDoesNotExist, FileMetadataNotPresent, UserNotInGroup {
+    public ResponseEntity<FileMetadata> getFileMetadata(@PathVariable long groupId, @PathVariable long fileId) throws FileDoesNotExist, FileMetadataNotPresent, UserNotInGroup {
         FileMetadata metadata = fileMetadataService.getFileMetadata(groupId, fileId);
         return ResponseEntity.ok(metadata);
     }

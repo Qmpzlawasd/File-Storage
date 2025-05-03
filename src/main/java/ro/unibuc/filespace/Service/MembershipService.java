@@ -23,7 +23,7 @@ public class MembershipService {
         membershipRepository.save(new Membership(group, user));
     }
 
-    public List<User> getUsersInGroup(long groupId) throws UserNotInGroup {
+    public List<User> getUsersInGroup(long groupId) {
         return membershipRepository.getUsersInGroup(groupId);
     }
 

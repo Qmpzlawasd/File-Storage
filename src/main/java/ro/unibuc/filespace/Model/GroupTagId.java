@@ -9,7 +9,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FileTagId  implements Serializable {
+public class GroupTagId implements Serializable {
     private Tag tag;
     private File file;
+    private Group group;
 }

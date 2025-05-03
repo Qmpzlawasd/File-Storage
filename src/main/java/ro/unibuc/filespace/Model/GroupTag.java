@@ -10,12 +10,12 @@ import org.hibernate.annotations.DynamicInsert;
 @Getter
 @Setter
 @Entity
-@Table(name = "FILE_TAG")
+@Table(name = "GROUP_TAG")
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicInsert
-@IdClass(FileTagId.class)
-public class FileTag {
+@IdClass(GroupTagId.class)
+public class GroupTag {
     @Id
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "tag_id", nullable = false)
@@ -24,10 +24,19 @@ public class FileTag {
     @Id
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumns({
-            @JoinColumn(name = "file_id", referencedColumnName = "file_id"),
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+            @JoinColumn(name = "file_id", referencedColumnName = "file_id", nullable = false),
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false)
     })
     private File file;
 
+    @Id
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "groupId", nullable = false)
+    private Group group;
+
+    public GroupTag(File file, Group group) {
+        this.file = file;
+        this.group = group;
+    }
 }
 

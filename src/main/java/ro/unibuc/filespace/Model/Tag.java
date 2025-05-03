@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -29,14 +30,15 @@ public class Tag {
 
     @ManyToMany
     @JsonIgnore
-    @JoinTable(name = "FILE_TAG", joinColumns = {@JoinColumn(name = "tag_id")}, inverseJoinColumns = {
+    @JoinTable(name = "GROUP_TAG", joinColumns = {@JoinColumn(name = "tag_id")}, inverseJoinColumns = {
             @JoinColumn(name = "file_id", referencedColumnName = "file_id"),
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id")
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
+            @JoinColumn(name = "groupId", referencedColumnName = "groupId")
     })
-    private Set<File> files;
+    private Set<GroupTag> files = new HashSet<>();
 
-    public Tag(String tagName, File file) {
+    public Tag(String tagName, GroupTag groupTag) {
         this.tagName = tagName;
-        this.files = Set.of(file);
+        this.files = Set.of(groupTag);
     }
 }
