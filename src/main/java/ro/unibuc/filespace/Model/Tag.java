@@ -37,8 +37,7 @@ public class Tag {
     })
     private Set<GroupTag> files = new HashSet<>();
 
-    public Tag(String tagName, GroupTag groupTag) {
+    public Tag(String tagName) {
         this.tagName = tagName;
-        this.files = Set.of(groupTag);
     }
 }

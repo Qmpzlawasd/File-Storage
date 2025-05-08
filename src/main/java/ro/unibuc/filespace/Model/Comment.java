@@ -18,27 +18,27 @@ import java.time.LocalDateTime;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(name = "comment_id", nullable = false, unique = true)
+    @Column(name = "comment_id", nullable = false, unique = true, updatable = false)
     private Long commentId;
 
     @Column(name = "comment", nullable = false)
     private String comment;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "file_id", referencedColumnName = "file_id")
+    @JoinColumn(name = "file_id", referencedColumnName = "file_id", updatable = false)
     private File file;
 
     @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", updatable = false)
     private User commenter;
 
-    @Column(name = "parent_comment_id")
+    @Column(name = "parent_comment_id", updatable = false)
     private Long parentCommentId;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public Comment(String comment, File file, User user,Long parentCommentId, LocalDateTime createdAt) {
+    public Comment(String comment, File file, User user, Long parentCommentId, LocalDateTime createdAt) {
         this.comment = comment;
         this.file = file;
         this.commenter = user;

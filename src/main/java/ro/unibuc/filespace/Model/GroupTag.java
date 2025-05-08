@@ -1,7 +1,8 @@
 
 package ro.unibuc.filespace.Model;
+
 import jakarta.persistence.*;
-        import lombok.AllArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,10 +34,5 @@ public class GroupTag {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "groupId", nullable = false)
     private Group group;
-
-    public GroupTag(File file, Group group) {
-        this.file = file;
-        this.group = group;
-    }
 }
 

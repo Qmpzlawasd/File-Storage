@@ -29,7 +29,10 @@ public class TagService {
     public Tag addTag(long groupId, long fileId, String tagName) throws FileDoesNotExist, UserNotInGroup {
         File file = fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
         Group group = groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new);
-        return tagRepository.save(new Tag(tagName, new GroupTag(file, group)));
+
+        Tag tag = tagRepository.save(new Tag(tagName));
+        groupTagRepository.save(new GroupTag(tag, file, group));
+        return tag;
     }
 
     public List<Tag> getFileTags(long groupId, long fileId) throws UserNotInGroup, FileDoesNotExist {
