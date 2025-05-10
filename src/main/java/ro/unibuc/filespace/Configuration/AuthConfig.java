@@ -94,7 +94,7 @@ public class AuthConfig {
         http
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/users", "/v2/api-docs",
+                        .requestMatchers("/sign-up", "/v2/api-docs",
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -108,7 +108,7 @@ public class AuthConfig {
                         ).permitAll()
                         .anyRequest().permitAll()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/login", "/users"))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/login", "/sign-up"))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer((customizer) -> customizer.jwt(Customizer.withDefaults()))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

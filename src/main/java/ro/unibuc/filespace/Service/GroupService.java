@@ -68,28 +68,81 @@ public class GroupService {
     }
 
     public Optional<User> getUserFromGroup(long groupId, long userId) {
-        return groupRepository.findUserInGroup(groupId, userId);
+        log.debug("Checking if user ID {} exists in group ID {}", userId, groupId);
+        Optional<User> user = groupRepository.findUserInGroup(groupId, userId);
+        if (user.isPresent()) {
+            log.debug("User ID {} found in group ID {}", userId, groupId);
+        } else {
+            log.debug("User ID {} not found in group ID {}", userId, groupId);
+        }
+        return user;
     }
 
     public List<User> getGroupUsers(long id) throws UserNotInGroup {
-        this.getUserFromGroup(id, userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
-        return membershipService.getUsersInGroup(id);
+        log.info("Fetching users for group ID {}", id);
+
+        long authenticatedUserId = userService.getAuthenticatedUser().getUserId();
+        log.debug("Authenticated user ID: {}", authenticatedUserId);
+
+        this.getUserFromGroup(id, authenticatedUserId).orElseThrow(() -> {
+            log.warn("User ID {} not authorized to access group ID {}", authenticatedUserId, id);
+            return new UserNotInGroup();
+        });
+
+        List<User> users = membershipService.getUsersInGroup(id);
+        log.info("Found {} users in group ID {}", users.size(), id);
+        return users;
     }
 
     public String generateInvitation(String groupName, String username) throws UserDoesNotExist, GroupDoesNotExist, UserNotInGroup, Exception {
-        User thisUser = userService.findUserByUsername(username).orElseThrow(UserDoesNotExist::new);
-        Group thisGroup = this.getGroup(groupName).orElseThrow(GroupDoesNotExist::new);
-        this.getUserFromGroup(thisGroup.getGroupId(), userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
-        return encryptionHelper.encodeInvitation(groupName, username);
+        log.info("Generating invitation for user '{}' to group '{}'", username, groupName);
+
+        User thisUser = userService.findUserByUsername(username).orElseThrow(() -> {
+            log.error("User '{}' not found", username);
+            return new UserDoesNotExist();
+        });
+
+        Group thisGroup = this.getGroup(groupName).orElseThrow(() -> {
+            log.error("Group '{}' not found", groupName);
+            return new GroupDoesNotExist();
+        });
+
+        long authenticatedUserId = userService.getAuthenticatedUser().getUserId();
+        this.getUserFromGroup(thisGroup.getGroupId(), authenticatedUserId).orElseThrow(() -> {
+            log.warn("User ID {} not authorized to invite to group '{}'", authenticatedUserId, groupName);
+            return new UserNotInGroup();
+        });
+
+        String token = encryptionHelper.encodeInvitation(groupName, username);
+        log.debug("Generated invitation token for user '{}' to group '{}'", username, groupName);
+        return token;
     }
 
     public void acceptInvitation(String token) throws Exception {
+        log.info("Processing invitation acceptance for token: {}", token);
+
         InvitationDto receivedInvite = encryptionHelper.decodeInvitation(token);
-        if (!receivedInvite.getUsername().equals(userService.getAuthenticatedUser().getUsername())) {
+        log.debug("Decoded invitation: {}", receivedInvite);
+
+        String currentUsername = userService.getAuthenticatedUser().getUsername();
+        if (!receivedInvite.getUsername().equals(currentUsername)) {
+            log.error("Invite username '{}' doesn't match current user '{}'",
+                    receivedInvite.getUsername(), currentUsername);
             throw new RuntimeException("Invite does not match this user");
         }
-        Group invitedGroup = getGroup(receivedInvite.getGroupName()).orElseThrow(GroupDoesNotExist::new);
-        addUserToGroup(userService.getAuthenticatedUser(), invitedGroup);
+
+        Group invitedGroup = getGroup(receivedInvite.getGroupName()).orElseThrow(() -> {
+            log.error("Group '{}' from invitation not found", receivedInvite.getGroupName());
+            return new GroupDoesNotExist();
+        });
+
+        User currentUser = userService.getAuthenticatedUser();
+        log.info("Adding user '{}' to group '{}' via invitation",
+                currentUser.getUsername(), invitedGroup.getGroupName());
+
+        addUserToGroup(currentUser, invitedGroup);
+        log.info("Successfully added user '{}' to group '{}'",
+                currentUser.getUsername(), invitedGroup.getGroupName());
     }
 }
 

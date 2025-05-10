@@ -60,7 +60,7 @@ public class FileControllerTest {
     void uploadFileRequest_invalidGroup_badRequest() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test file\n".getBytes());
         mockMvc.perform(requestTester.PostFile("/0/upload", multipartFile))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class FileControllerTest {
 
     @Test
     void uploadFileRequest_userNotInGroup_badRequest() throws Exception {
-        Group newGroup = groupRepository.save(new Group("group1"));
+        Group newGroup = groupRepository.save(new Group("group5"));
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test".getBytes());
         mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile))

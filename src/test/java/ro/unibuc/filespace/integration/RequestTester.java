@@ -33,7 +33,7 @@ public class RequestTester {
     private GroupService groupService;
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @Autowired
     private ObjectMapper objectMapper;

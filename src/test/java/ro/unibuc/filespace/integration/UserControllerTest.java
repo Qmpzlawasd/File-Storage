@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Model.User;
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@ActiveProfiles("test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class UserControllerTest {
@@ -44,7 +46,7 @@ public class UserControllerTest {
     void creationRequest_usernameNotTaken_createsUser() throws Exception {
         var userDto = new UserDataDto("newUser", "newUserPass");
 
-        mockMvc.perform(requestTester.Post("/users", userDto)).andExpect(status().isCreated());
+        mockMvc.perform(requestTester.Post("/sign-up", userDto)).andExpect(status().isCreated());
 
         var createdUser = userRepository.findByUsername(userDto.getUsername());
 
@@ -54,12 +56,12 @@ public class UserControllerTest {
     @Test
     void creationRequest_usernameTaken_createsUser() throws Exception {
         var user1Dto = new UserDataDto("newUser", "newUserPass1");
-        mockMvc.perform(requestTester.Post("/users", user1Dto)).andExpect(status().isCreated());
+        mockMvc.perform(requestTester.Post("/sign-up", user1Dto)).andExpect(status().isCreated());
 
         var createdUser = userRepository.findByUsername(user1Dto.getUsername());
         assertFalse(createdUser.isEmpty());
 
         var user2Dto = new UserDataDto("newUser", "newUserPass2");
-        mockMvc.perform(requestTester.Post("/users", user2Dto)).andExpect(status().isBadRequest());
+        mockMvc.perform(requestTester.Post("/sign-up", user2Dto)).andExpect(status().isBadRequest());
     }
 }

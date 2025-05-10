@@ -37,12 +37,12 @@ public class FileMetadataService {
         fileMetadataRepository.save(new FileMetadata(file, extension, size, checksum));
     }
 
-    private String extractExtension(String fileName) {
+    public String extractExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
         return (index > 0) ? fileName.substring(index + 1) : null;
     }
 
-    private long computeCRC32Checksum(byte[] data) {
+    public long computeCRC32Checksum(byte[] data) {
         Checksum crc32 = new CRC32();
         crc32.update(data, 0, data.length);
         return crc32.getValue();

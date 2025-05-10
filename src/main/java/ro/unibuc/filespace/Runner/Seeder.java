@@ -3,10 +3,12 @@ package ro.unibuc.filespace.Runner;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.sqlite.FileException;
+import ro.unibuc.filespace.Exception.FileIsEmpty;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
@@ -19,11 +21,12 @@ import java.util.Collections;
 
 @RequiredArgsConstructor
 @Component
+@Profile("!test")
 public class Seeder implements ApplicationRunner {
     private final SeederHelper seederHelper;
 
     @Override
-    public void run(ApplicationArguments args) throws FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
+    public void run(ApplicationArguments args) throws FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists, FileIsEmpty {
         User user1 = seederHelper.createUser("string", "string");
         User user2 = seederHelper.createUser("user2", "string");
         User user3 = seederHelper.createUser("user3", "string");

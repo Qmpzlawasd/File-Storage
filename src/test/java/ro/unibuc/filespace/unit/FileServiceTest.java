@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.*;
@@ -14,6 +16,7 @@ import ro.unibuc.filespace.Repository.FileRepository;
 import ro.unibuc.filespace.Service.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,22 +66,29 @@ public class FileServiceTest {
         when(fileRepository.findByFileNameAndGroupId(groupId, fileName)).thenReturn(Optional.empty());
         when(fileRepository.save(any(File.class))).thenReturn(expectedFile);
 
-        File storedFile = fileService.storeFile(groupId, multipartFile, user);
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        File storedFile = fileService.storeFile(groupId, multipartFile);
 
         assertNotNull(storedFile);
         assertEquals(fileName, storedFile.getFileName());
         assertEquals("file content", storedFile.getFileContent());
         verify(storageService, times(1)).addFileToGroup(storedFile, group);
+        SecurityContextHolder.clearContext();
     }
 
     @Test
     public void testStoreFile_FileIsEmpty() {
         long groupId = 1L;
         User user = new User(1L, "testUser", "password");
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
         when(multipartFile.isEmpty()).thenReturn(true);
 
-        assertThrows(FileException.class, () -> fileService.storeFile(groupId, multipartFile, user));
+        assertThrows(FileIsEmpty.class, () -> fileService.storeFile(groupId, multipartFile));
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -96,7 +106,11 @@ public class FileServiceTest {
         when(groupService.getUserFromGroup(groupId, user.getUserId())).thenReturn(Optional.of(user));
         when(fileRepository.findByFileNameAndGroupId(groupId, fileName)).thenReturn(Optional.of(new File()));
 
-        assertThrows(FileWithNameAlreadyExists.class, () -> fileService.storeFile(groupId, multipartFile, user));
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        assertThrows(FileWithNameAlreadyExists.class, () -> fileService.storeFile(groupId, multipartFile));
+        SecurityContextHolder.clearContext();
+
     }
 
     @Test
@@ -132,16 +146,69 @@ public class FileServiceTest {
     }
 
     @Test
-    public void testGetFileFromGroup_Success() {
+    public void testGetFileFromGroup_Success() throws UserNotInGroup {
+        // Arrange
         long groupId = 1L;
         String fileName = "testFile.txt";
-        File file = new File(fileName, new User(), "file content");
+        User user = new User(1L, "testUser", "password");
+        File expectedFile = new File(fileName, user, "file content");
 
-        when(fileRepository.findByFileNameAndGroupId(groupId, fileName)).thenReturn(Optional.of(file));
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(groupService.getUserFromGroup(groupId, user.getUserId())).thenReturn(Optional.of(user));
+        when(fileRepository.findByFileNameAndGroupId(groupId, fileName)).thenReturn(Optional.of(expectedFile));
 
+        // Act
         Optional<File> result = fileService.getFileFromGroup(groupId, fileName);
 
+        // Assert
         assertTrue(result.isPresent());
         assertEquals(fileName, result.get().getFileName());
+        assertEquals(user, result.get().getUser());
+
+        verify(userService).getAuthenticatedUser();
+        verify(groupService).getUserFromGroup(groupId, user.getUserId());
+        verify(fileRepository).findByFileNameAndGroupId(groupId, fileName);
+    }
+
+    @Test
+    public void testGetFileFromGroup_UserNotInGroup() {
+        // Arrange
+        long groupId = 1L;
+        String fileName = "testFile.txt";
+        User user = new User(1L, "testUser", "password");
+
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(groupService.getUserFromGroup(groupId, user.getUserId())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UserNotInGroup.class, () -> {
+            fileService.getFileFromGroup(groupId, fileName);
+        });
+
+        verify(userService).getAuthenticatedUser();
+        verify(groupService).getUserFromGroup(groupId, user.getUserId());
+        verifyNoInteractions(fileRepository);
+    }
+
+    @Test
+    public void testGetFileFromGroup_FileNotFound() throws UserNotInGroup {
+        // Arrange
+        long groupId = 1L;
+        String fileName = "nonExistentFile.txt";
+        User user = new User(1L, "testUser", "password");
+
+        when(userService.getAuthenticatedUser()).thenReturn(user);
+        when(groupService.getUserFromGroup(groupId, user.getUserId())).thenReturn(Optional.of(user));
+        when(fileRepository.findByFileNameAndGroupId(groupId, fileName)).thenReturn(Optional.empty());
+
+        // Act
+        Optional<File> result = fileService.getFileFromGroup(groupId, fileName);
+
+        // Assert
+        assertTrue(result.isEmpty());
+
+        verify(userService).getAuthenticatedUser();
+        verify(groupService).getUserFromGroup(groupId, user.getUserId());
+        verify(fileRepository).findByFileNameAndGroupId(groupId, fileName);
     }
 }

@@ -2,19 +2,15 @@ package ro.unibuc.filespace.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
-import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
-import ro.unibuc.filespace.Exception.GroupDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.*;
 import ro.unibuc.filespace.Repository.CommentRepository;
-import ro.unibuc.filespace.Repository.FileRepository;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,8 +52,8 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> getComments(long groupId, long fileId) throws FileDoesNotExist, UserNotInGroup {
-        File file = fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
-        return commentRepository.getCommentThread(groupId, fileId);
+    public Page<Comment> getComments(long groupId, long fileId, Pageable pageable) throws FileDoesNotExist, UserNotInGroup {
+        fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
+        return commentRepository.getCommentThread(groupId, fileId, pageable);
     }
 }

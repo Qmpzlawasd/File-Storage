@@ -6,10 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
-import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
-import ro.unibuc.filespace.Exception.GroupAlreadyExists;
-import ro.unibuc.filespace.Exception.UserAlreadyExists;
-import ro.unibuc.filespace.Exception.UserNotInGroup;
+import ro.unibuc.filespace.Exception.*;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
@@ -93,7 +90,7 @@ public class SeederHelper {
 
     }
 
-    File createFile(Group group, MultipartFile file) throws GroupAlreadyExists, FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
+    File createFile(Group group, MultipartFile file) throws GroupAlreadyExists, IOException, UserNotInGroup, FileWithNameAlreadyExists, FileIsEmpty {
         return fileService.storeFile(group.getGroupId(), file);
     }
 

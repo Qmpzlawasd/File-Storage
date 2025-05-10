@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
+import ro.unibuc.filespace.Exception.FileIsEmpty;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
@@ -29,7 +30,7 @@ public class FileController {
 
     @RequestMapping(value = "/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) throws FileException, IOException, UserNotInGroup, FileWithNameAlreadyExists {
+    public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) throws FileIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists {
         File file1 = fileService.storeFile(groupId, file);
         fileMetadataService.storeFileMetadata(file1);
         return ResponseEntity.status(HttpStatus.CREATED).build();
