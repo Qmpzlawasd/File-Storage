@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ro.unibuc.filespace.Exception.CommentDoesNotExist;
+import ro.unibuc.filespace.Exception.CommentIsEmpty;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.*;
@@ -21,9 +23,9 @@ public class CommentService {
     private final UserService userService;
     private final FileService fileService;
 
-    public Comment addComment(Long groupId, Long fileId, Long parentId, String commentContent) throws FileDoesNotExist, UserNotInGroup {
+    public Comment addComment(Long groupId, Long fileId, Long parentId, String commentContent) throws FileDoesNotExist, UserNotInGroup, CommentIsEmpty {
         if (commentContent == null || commentContent.trim().isEmpty()) {
-            throw new IllegalArgumentException("Comment content cannot be empty");
+            throw new CommentIsEmpty();
         }
 
         File file = fileService.getFileFromGroupById(groupId, fileId)
@@ -50,6 +52,28 @@ public class CommentService {
                 groupId);
 
         return commentRepository.save(comment);
+    }
+
+    public Comment editComment(long groupId, long fileId, Long commentId, String commentContent) throws CommentIsEmpty, UserNotInGroup, FileDoesNotExist, CommentDoesNotExist {
+        if (commentContent == null || commentContent.trim().isEmpty()) {
+            throw new CommentIsEmpty();
+        }
+
+        File file = fileService.getFileFromGroupById(groupId, fileId)
+                .orElseThrow(FileDoesNotExist::new);
+
+        User thisUser = userService.getAuthenticatedUser();
+        Comment comment = commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
+        if (!comment.getCommenter().equals(thisUser)) {
+            throw new CommentDoesNotExist();
+        }
+
+        int worked = commentRepository.updateCommentContent(commentId, thisUser.getUserId(), commentContent);
+        if (worked == 0) {
+            throw new CommentDoesNotExist();
+        }
+
+        return commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
     }
 
     public Page<Comment> getComments(long groupId, long fileId, Pageable pageable) throws FileDoesNotExist, UserNotInGroup {

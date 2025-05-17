@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
+import ro.unibuc.filespace.Dto.FileResponseDTO;
 import ro.unibuc.filespace.Exception.*;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.Group;
@@ -14,6 +15,7 @@ import ro.unibuc.filespace.Repository.FileRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -106,6 +108,10 @@ public class FileService {
             log.debug("File '{}' found in group {}", fileName, groupId);
         }
         return file;
+    }
+
+    public List<FileResponseDTO> mapFilesToFileDTO(List<File> files) {
+        return files.stream().map(file -> new FileResponseDTO(file.getFileContent(), file.getFileName(), file.getUser().getUsername())).toList();
     }
 
     public Optional<File> getFileFromGroupById(long groupId, long fileId) throws UserNotInGroup {

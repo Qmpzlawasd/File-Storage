@@ -45,6 +45,10 @@ public class Comment {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at", updatable = true)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS")
+    private LocalDateTime updatedAt = null;
+
     public Comment(String comment, File file, User user, Long parentCommentId, LocalDateTime createdAt) {
         this.comment = comment;
         this.file = file;

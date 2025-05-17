@@ -1,6 +1,7 @@
 package ro.unibuc.filespace.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,7 @@ public class File {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "file_content", nullable = false)
+    @Column(name = "file_content", length = 10000000, nullable = false)
     private String fileContent;
 
     @Column(name = "is_deleted")

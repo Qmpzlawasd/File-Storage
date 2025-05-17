@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @IdClass(FileMetadataId.class)
 public class FileMetadata {
     @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JsonIgnore
     @JoinColumns({
             @JoinColumn(name = "file_id", referencedColumnName = "file_id"),

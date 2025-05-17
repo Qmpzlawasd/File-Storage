@@ -7,13 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.sqlite.FileException;
+import ro.unibuc.filespace.Dto.FileResponseDTO;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.FileIsEmpty;
 import ro.unibuc.filespace.Exception.FileWithNameAlreadyExists;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
-import ro.unibuc.filespace.Model.FileMetadata;
 import ro.unibuc.filespace.Service.FileMetadataService;
 import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.StorageService;
@@ -38,10 +37,9 @@ public class FileController {
 
     @RequestMapping(value = "/{groupId}/files", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<File>> getGroupFiles(@PathVariable long groupId) throws UserNotInGroup {
-        List<File> files;
-        files = storageService.getFilesFromGroup(groupId);
-        return ResponseEntity.ok(files);
+    public ResponseEntity<List<FileResponseDTO>> getGroupFiles(@PathVariable long groupId) throws UserNotInGroup {
+        List<File>  files = storageService.getFilesFromGroup(groupId);
+        return ResponseEntity.ok(fileService.mapFilesToFileDTO(files));
     }
 
     @RequestMapping(value = "/{groupId}/delete_file", method = RequestMethod.DELETE)

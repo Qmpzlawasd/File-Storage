@@ -8,6 +8,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import ro.unibuc.filespace.Exception.CommentDoesNotExist;
+import ro.unibuc.filespace.Exception.CommentIsEmpty;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.Comment;
@@ -22,8 +24,15 @@ public class CommentController {
 
     @RequestMapping(value = {"/{groupId}/{fileId}/comment/{parentId}", "/{groupId}/{fileId}/comment"}, method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Comment> addComment(@PathVariable Long groupId, @PathVariable Long fileId, @PathVariable(required = false) Long parentId, @RequestParam("comment") String commentContent) throws FileDoesNotExist, UserNotInGroup {
+    public ResponseEntity<Comment> addComment(@PathVariable Long groupId, @PathVariable Long fileId, @PathVariable(required = false) Long parentId, @RequestParam("comment") String commentContent) throws FileDoesNotExist, UserNotInGroup, CommentIsEmpty {
         Comment comment = commentService.addComment(groupId, fileId, parentId, commentContent);
+        return ResponseEntity.ok(comment);
+    }
+
+    @RequestMapping(value = {"/{groupId}/{fileId}/comment/{commentId}"}, method = RequestMethod.PATCH)
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Comment> editComment(@PathVariable Long groupId, @PathVariable Long fileId, @PathVariable Long commentId, @RequestParam("comment") String commentContent) throws FileDoesNotExist, UserNotInGroup, CommentIsEmpty, CommentDoesNotExist {
+        Comment comment = commentService.editComment(groupId, fileId, commentId, commentContent);
         return ResponseEntity.ok(comment);
     }
 
