@@ -22,14 +22,14 @@ public class UserController {
     private final UserService userService;
     private final MembershipService membershipService;
 
-    @GetMapping("/list_groups")
+    @GetMapping("/api/list_groups")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Group>> listGroups() {
         List<Group> groups = membershipService.getJoinedGroups(userService.getAuthenticatedUser());
         return ResponseEntity.ok(groups);
     }
 
-    @PostMapping("/sign-up")
+    @PostMapping("/api/sign-up")
     public ResponseEntity<Void> createAccount(@RequestBody UserDataDto createUserDto) {
         log.info("Attempting to create account with username {} and password {}", createUserDto.getUsername(), createUserDto.getPassword());
             userService.createUser(createUserDto.getUsername(), createUserDto.getPassword());

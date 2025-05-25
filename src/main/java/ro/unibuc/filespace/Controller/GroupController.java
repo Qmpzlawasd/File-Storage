@@ -23,21 +23,21 @@ public class GroupController {
     private final MembershipService membershipService;
     private final UserService userService;
 
-    @PostMapping("create_group")
+    @PostMapping("/api/create_group")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> createGroup(@RequestParam String groupName) {
         groupService.createGroup(groupName);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @RequestMapping(value = "/{groupId}/list_members", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/{groupId}/list_members", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<User>> getUsersInGroup(@PathVariable long groupId) throws UserNotInGroup {
         List<User> users = groupService.getGroupUsers(groupId);
         return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/invite")
+    @GetMapping("/api/invite")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> invite(@RequestParam String groupName, @RequestParam String username) throws Exception {
         Group group = groupService.getGroup(groupName).orElseThrow(GroupDoesNotExist::new);
@@ -46,7 +46,7 @@ public class GroupController {
         return ResponseEntity.ok(invite);
     }
 
-    @GetMapping("/accept_invite")
+    @GetMapping("/api/accept_invite")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> acceptInvite(@RequestParam String inviteToken) throws Exception {
             groupService.acceptInvitation(inviteToken);

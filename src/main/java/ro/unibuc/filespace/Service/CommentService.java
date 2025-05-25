@@ -64,7 +64,7 @@ public class CommentService {
 
         User thisUser = userService.getAuthenticatedUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
-        if (!comment.getCommenter().equals(thisUser)) {
+        if (!comment.getCommenter().getUserId().equals(thisUser.getUserId())) {
             throw new CommentDoesNotExist();
         }
 

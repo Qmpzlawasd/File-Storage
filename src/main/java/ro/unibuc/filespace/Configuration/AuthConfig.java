@@ -108,7 +108,7 @@ public class AuthConfig {
                         ).permitAll()
                         .anyRequest().permitAll()
                 )
-                .csrf((csrf) -> csrf.ignoringRequestMatchers("/login", "/sign-up"))
+                .csrf((csrf) -> csrf.ignoringRequestMatchers("/api/login", "/login", "/logout", "/sign-up", "/api/sign-up"))
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer((customizer) -> customizer.jwt(Customizer.withDefaults()))
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

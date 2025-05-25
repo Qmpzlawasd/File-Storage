@@ -7,18 +7,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.sqlite.FileException;
 import ro.unibuc.filespace.Exception.*;
+import ro.unibuc.filespace.Model.Comment;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
-import ro.unibuc.filespace.Service.FileMetadataService;
-import ro.unibuc.filespace.Service.FileService;
-import ro.unibuc.filespace.Service.GroupService;
-import ro.unibuc.filespace.Service.UserService;
+import ro.unibuc.filespace.Repository.CommentRepository;
+import ro.unibuc.filespace.Service.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -27,6 +28,7 @@ public class SeederHelper {
     private final GroupService groupService;
     private final FileService fileService;
     private final FileMetadataService fileMetadataService;
+    private final CommentService commentService;
 
     User createUser(String username, String password) throws UserAlreadyExists {
         return userService.createUser(username, password);
@@ -96,5 +98,25 @@ public class SeederHelper {
 
     void storeFileMetadata(File file) {
         fileMetadataService.storeFileMetadata(file);
+    }
+
+    void fill100FilesComments(Group group) throws FileIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists, FileDoesNotExist, CommentIsEmpty, CommentDoesNotExist, InterruptedException {
+        int times = 1;
+        for (int i = 0; i < times; i++) {
+            File f = fileService.storeFile(group.getGroupId(), createMockMultipartFile("asd" + i, "AsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasdAsdadsasd".getBytes()));
+            Comment comment = null;
+            for (int j = 0; j < times; j++) {
+                comment = commentService.addComment(group.getGroupId(), f.getFileId(), null, "testsetsetse " + j);
+            }
+            commentService.editComment(group.getGroupId(), f.getFileId(), comment.getCommentId(), "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+            commentService.getComments(group.getGroupId(), f.getFileId(), null);
+        }
+    }
+
+    void add10Groups() throws FileDoesNotExist, FileIsEmpty, CommentIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists, CommentDoesNotExist, InterruptedException {
+        for (int i = 0; i < 10; i++) {
+            Group group1 = groupService.createGroup("Test " + i);
+            fill100FilesComments(group1);
+        }
     }
 }

@@ -21,19 +21,19 @@ public class TagController {
     private final FileMetadataService fileMetadataService;
     private final TagService tagService;
 
-    @RequestMapping(value = "/{groupId}/{fileId}/tag", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/{groupId}/{fileId}/tag", method = RequestMethod.POST)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Tag> addTag(@PathVariable long groupId, @PathVariable long fileId, String tagName) throws FileDoesNotExist, UserNotInGroup {
         return ResponseEntity.ok(tagService.addTag(groupId, fileId, tagName));
     }
 
-    @RequestMapping(value = "/{groupId}/{fileId}/tags", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/{groupId}/{fileId}/tags", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Tag>> getFileTags(@PathVariable long groupId, @PathVariable long fileId) throws FileDoesNotExist, UserNotInGroup {
         return ResponseEntity.ok(tagService.getFileTags(groupId, fileId));
     }
 
-    @RequestMapping(value = "/{groupId}/tags", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/{groupId}/tags", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<Tag>> getGroupTags(@PathVariable long groupId) throws FileDoesNotExist, UserNotInGroup {
         return ResponseEntity.ok(tagService.getGroupTags(groupId));

@@ -27,7 +27,7 @@ public class FileController {
     private final StorageService storageService;
     private final FileMetadataService fileMetadataService;
 
-    @RequestMapping(value = "/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @RequestMapping(value = "/api/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file) throws FileIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists {
         File file1 = fileService.storeFile(groupId, file);
@@ -35,14 +35,14 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @RequestMapping(value = "/{groupId}/files", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/{groupId}/files", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<FileResponseDTO>> getGroupFiles(@PathVariable long groupId) throws UserNotInGroup {
         List<File>  files = storageService.getFilesFromGroup(groupId);
         return ResponseEntity.ok(fileService.mapFilesToFileDTO(files));
     }
 
-    @RequestMapping(value = "/{groupId}/delete_file", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/{groupId}/delete_file", method = RequestMethod.DELETE)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteFile(@PathVariable long groupId, @RequestParam String fileName) throws FileDoesNotExist, UserNotInGroup {
         fileService.deleteFileFromGroup(groupId, fileName);

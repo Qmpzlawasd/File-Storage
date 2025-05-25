@@ -11,9 +11,11 @@ import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Exception.UserAlreadyExists;
 import ro.unibuc.filespace.Exception.UserDoesNotExist;
 import ro.unibuc.filespace.Exception.UserWrongPassword;
+import ro.unibuc.filespace.Model.Group;
 import ro.unibuc.filespace.Model.User;
 import ro.unibuc.filespace.Repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -60,5 +62,9 @@ public class UserService {
 
     public User getAuthenticatedUser() throws UserDoesNotExist {
         return userRepository.findByUsername(this.getAuthenticatedUsername()).orElseThrow(UserDoesNotExist::new);
+    }
+
+    public List<Group> getGroups() throws UserDoesNotExist {
+        return userRepository.findUserGroups(this.getAuthenticatedUser().getUserId());
     }
 }

@@ -18,7 +18,7 @@ public class FileMetadataController {
     private static final Logger log = LoggerFactory.getLogger(FileMetadataController.class);
     private final FileMetadataService fileMetadataService;
 
-    @RequestMapping(value = "/{groupId}/files/{fileId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/{groupId}/files/{fileId}", method = RequestMethod.GET)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<FileMetadata> getFileMetadata(@PathVariable long groupId, @PathVariable long fileId) throws FileDoesNotExist, FileMetadataNotPresent, UserNotInGroup {
         FileMetadata metadata = fileMetadataService.getFileMetadata(groupId, fileId);
