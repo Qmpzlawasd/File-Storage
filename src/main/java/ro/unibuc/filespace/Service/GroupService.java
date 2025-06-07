@@ -36,6 +36,7 @@ public class GroupService {
             log.info("User with id {} is already in group with id {}", user.getUserId(), group.getGroupId());
             return;
         }
+        log.info("User with id {} added to group with id {}", user.getUserId(), group.getGroupId());
         membershipService.createMembership(thisGroup, thisUser);
     }
 

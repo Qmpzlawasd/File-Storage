@@ -19,11 +19,11 @@ public class StorageService {
     private final UserService userService;
 
     public Storage addFileToGroup(File file, Group group) {
-        return storageRepository.save(new Storage(group, file));
+        return storageRepository.save(new Storage(group.getGroupId(), file.getFileId() , file.getUserId()));
     }
 
     public List<File> getFilesFromGroup(long groupId) throws UserNotInGroup {
         groupService.getUserFromGroup(groupId, userService.getAuthenticatedUser().getUserId()).orElseThrow(UserNotInGroup::new);
-        return storageRepository.findFilesByGroup(groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new));
+        return storageRepository.findFilesByGroup(groupId);
     }
 }

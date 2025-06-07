@@ -1,16 +1,17 @@
 package ro.unibuc.filespace.Model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 public class GroupTagId implements Serializable {
-    private Tag tag;
-    private File file;
-    private Group group;
+    private Long tagId;
+    private Long fileId;
+    private Long userId;
+    private Long groupId;
 }

@@ -33,15 +33,15 @@ public class CommentService {
 
         if (parentId != null) {
             Optional<Comment> parentComment = commentRepository.findById(parentId);
-            if (parentComment.isEmpty() || !parentComment.get().getFile().getFileId().equals(fileId)) {
+            if (parentComment.isEmpty() || !parentComment.get().getFileId().equals(fileId)) {
                 throw new IllegalArgumentException("Parent comment doesn't exist or doesn't belong to this file");
             }
         }
-
         Comment comment = new Comment(
                 commentContent,
-                file,
-                userService.getAuthenticatedUser(),
+                file.getFileId(),
+                file.getUserId(),
+                userService.getAuthenticatedUser().getUserId(),
                 parentId,
                 LocalDateTime.now()
         );
@@ -64,7 +64,7 @@ public class CommentService {
 
         User thisUser = userService.getAuthenticatedUser();
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
-        if (!comment.getCommenter().getUserId().equals(thisUser.getUserId())) {
+        if (!comment.getCommenterId().equals(thisUser.getUserId())) {
             throw new CommentDoesNotExist();
         }
 

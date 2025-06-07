@@ -29,16 +29,6 @@ public class Group {
     @Column(name = "groupName", nullable = false, unique = true)
     private String groupName;
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "STORAGE", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "file_id"), @JoinColumn(name = "user_id")})
-    private Set<File> files;
-
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "MEMBERSHIP", joinColumns = {@JoinColumn(name = "group_id")}, inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    private Set<User> users;
-
     public Group(String group_name) {
         this.groupName = group_name;
     }

@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import ro.unibuc.filespace.Exception.CommentIsEmpty;
 import ro.unibuc.filespace.Exception.FileDoesNotExist;
 import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.Comment;
@@ -53,22 +54,16 @@ class CommentServiceTest {
 
         testFile = new File();
         testFile.setFileId(1L);
-        testFile.setUser(testUser);
+        testFile.setUserId(testUser.getUserId());
 
         testComment = new Comment(
                 "Test comment",
-                testFile,
-                testUser,
+                testFile.getFileId(),
+                testUser.getUserId(),
                 null,
                 LocalDateTime.now()
         );
         testComment.setCommentId(1L);
-    }
-
-    @Test
-    void addComment_shouldThrowExceptionWhenContentIsEmpty() {
-        assertThrows(IllegalArgumentException.class,
-                () -> commentService.addComment(1L, 1L, null, ""));
     }
 
     @Test
@@ -89,7 +84,7 @@ class CommentServiceTest {
     }
 
     @Test
-    void addComment_shouldCreateRootComment() throws FileDoesNotExist, UserNotInGroup {
+    void addComment_shouldCreateRootComment() throws FileDoesNotExist, UserNotInGroup, CommentIsEmpty {
         when(fileService.getFileFromGroupById(1L, 1L)).thenReturn(Optional.of(testFile));
         when(userService.getAuthenticatedUser()).thenReturn(testUser);
         when(commentRepository.save(any(Comment.class))).thenReturn(testComment);

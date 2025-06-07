@@ -1,16 +1,16 @@
 package ro.unibuc.filespace.Model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 public class StorageId implements Serializable {
-    private Group group;
-    private File file;
-
+    private Long groupId;
+    private Long fileId;
+    private Long userId;
 }

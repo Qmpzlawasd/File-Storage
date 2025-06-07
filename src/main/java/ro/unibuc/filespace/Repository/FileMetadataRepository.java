@@ -12,6 +12,6 @@ import java.util.Optional;
 @Repository
 public interface FileMetadataRepository extends CrudRepository<FileMetadata, FileMetadataId> {
     @Transactional(readOnly = true)
-    @Query("SELECT s from File f JOIN FileMetadata s ON f.fileId = s.file.fileId where f.fileId = :fileId and f.isDeleted = false")
+    @Query("SELECT s from File f JOIN FileMetadata s ON f.fileId = s.fileId where f.fileId = :fileId and f.isDeleted = false")
     Optional<FileMetadata> findFileMetadata(long fileId);
 }

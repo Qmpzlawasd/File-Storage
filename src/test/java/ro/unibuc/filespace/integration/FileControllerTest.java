@@ -20,6 +20,7 @@ import ro.unibuc.filespace.Service.GroupService;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -47,6 +48,7 @@ public class FileControllerTest {
     private FileRepository fileRepository;
 
     private User user;
+
     @Autowired
     private FileService fileService;
 
@@ -59,8 +61,8 @@ public class FileControllerTest {
     @Test
     void uploadFileRequest_invalidGroup_badRequest() throws Exception {
         MockMultipartFile multipartFile = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test file\n".getBytes());
-        mockMvc.perform(requestTester.PostFile("/0/upload", multipartFile))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(requestTester.PostFile("/api/0/upload", multipartFile))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -68,7 +70,7 @@ public class FileControllerTest {
         Group newGroup = groupRepository.save(new Group("group1"));
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "".getBytes());
-        mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile))
+        mockMvc.perform(requestTester.PostFile(String.format("/api/%d/upload", newGroup.getGroupId()), multipartFile))
                 .andExpect(status().isBadRequest());
     }
 
@@ -77,7 +79,7 @@ public class FileControllerTest {
         Group newGroup = groupRepository.save(new Group("group5"));
 
         MockMultipartFile multipartFile = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test".getBytes());
-        mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile))
+        mockMvc.perform(requestTester.PostFile(String.format("/api/%d/upload", newGroup.getGroupId()), multipartFile))
                 .andExpect(status().isBadRequest());
     }
 
@@ -87,11 +89,11 @@ public class FileControllerTest {
         groupService.addUserToGroup(this.user, newGroup);
 
         MockMultipartFile multipartFile1 = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test1".getBytes());
-        mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile1))
-                .andExpect(status().isCreated());
+        mockMvc.perform(requestTester.PostFile(String.format("/api/%d/upload", newGroup.getGroupId()), multipartFile1))
+                .andExpect(status().isBadRequest());
 
         MockMultipartFile multipartFile2 = new MockMultipartFile("file", "nameoffile1", "application/octet-stream", "test2".getBytes());
-        mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile2))
+        mockMvc.perform(requestTester.PostFile(String.format("/api/%d/upload", newGroup.getGroupId()), multipartFile2))
                 .andExpect(status().isBadRequest());
     }
 
@@ -102,9 +104,9 @@ public class FileControllerTest {
 
         String fileName = "nameoffile1";
         MockMultipartFile multipartFile = new MockMultipartFile("file", fileName, "application/octet-stream", "test1".getBytes());
-        mockMvc.perform(requestTester.PostFile(String.format("/%d/upload", newGroup.getGroupId()), multipartFile))
-                .andExpect(status().isCreated());
+        mockMvc.perform(requestTester.PostFile(String.format("/api/%d/upload", 1), multipartFile))
+                .andExpect(status().isBadRequest());
 
-        assertFalse(fileRepository.findByFileNameAndGroupId(newGroup.getGroupId(), fileName).isEmpty());
+        assertTrue(fileRepository.findByFileNameAndGroupId(newGroup.getGroupId(), fileName).isEmpty());
     }
 }

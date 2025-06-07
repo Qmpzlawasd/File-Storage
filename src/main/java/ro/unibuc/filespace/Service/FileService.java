@@ -58,7 +58,7 @@ public class FileService {
         }
 
         // upload file
-        File newFile = new File(file.getOriginalFilename(), thisUser, new String(file.getBytes(), StandardCharsets.UTF_8));
+        File newFile = new File(file.getOriginalFilename(), thisUser.getUserId(), new String(file.getBytes(), StandardCharsets.UTF_8));
         File storedFile = fileRepository.save(newFile);
         log.info("File '{}' saved with ID {}", storedFile.getFileName(), storedFile.getFileId());
 
@@ -111,7 +111,7 @@ public class FileService {
     }
 
     public List<FileResponseDTO> mapFilesToFileDTO(List<File> files) {
-        return files.stream().map(file -> new FileResponseDTO(file.getFileContent(), file.getFileName(), file.getUser().getUsername())).toList();
+        return files.stream().map(file -> new FileResponseDTO(file.getFileContent(), file.getFileName(), userService.getUser(file.getUserId()).getUsername())).toList();
     }
 
     public Optional<File> getFileFromGroupById(long groupId, long fileId) throws UserNotInGroup {

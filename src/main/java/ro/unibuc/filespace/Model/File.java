@@ -1,11 +1,8 @@
 package ro.unibuc.filespace.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.Set;
 
@@ -21,13 +18,12 @@ public class File {
     @Column(name = "file_id", nullable = false, unique = true)
     private Long fileId;
 
+    @Id
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
     @Column(name = "file_name", nullable = false)
     private String fileName;
-
-    @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id")
-    private User user;
 
     @Column(name = "file_content", length = 10000000, nullable = false)
     private String fileContent;
@@ -35,13 +31,9 @@ public class File {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-    public File(String file_name, User user, String file_content) {
-        this.fileName = file_name;
-        this.user = user;
-        this.fileContent = file_content;
+    public File(String fileName, Long userId, String fileContent) {
+        this.fileName = fileName;
+        this.userId = userId;
+        this.fileContent = fileContent;
     }
-
-    @JsonIgnore
-    @ManyToMany(mappedBy = "files")
-    private Set<Group> groups;
 }

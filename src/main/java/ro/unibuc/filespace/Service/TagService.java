@@ -31,7 +31,7 @@ public class TagService {
         Group group = groupService.getGroup(groupId).orElseThrow(GroupDoesNotExist::new);
 
         Tag tag = tagRepository.save(new Tag(tagName));
-        groupTagRepository.save(new GroupTag(tag, file, group));
+        groupTagRepository.save(new GroupTag(tag.getTagId(), file.getFileId(), file.getUserId(), group.getGroupId()));
         return tag;
     }
 

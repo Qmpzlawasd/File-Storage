@@ -54,12 +54,12 @@ class CommentControllerTest {
 
         File testFile = new File();
         testFile.setFileId(1L);
-        testFile.setUser(testUser);
+        testFile.setUserId(testUser.getUserId());
 
         testComment = new Comment(
                 "Test comment",
-                testFile,
-                testUser,
+                testFile.getFileId(),
+                testUser.getUserId(),
                 null,
                 LocalDateTime.now()
         );
@@ -71,7 +71,7 @@ class CommentControllerTest {
         when(commentService.addComment(anyLong(), anyLong(), any(), anyString()))
                 .thenReturn(testComment);
 
-        mockMvc.perform(post("/1/1/comment")
+        mockMvc.perform(post("/api/1/1/comment")
                         .param("comment", "Test comment")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -83,7 +83,7 @@ class CommentControllerTest {
         when(commentService.addComment(anyLong(), anyLong(), anyLong(), anyString()))
                 .thenReturn(testComment);
 
-        mockMvc.perform(post("/1/1/comment/2")
+        mockMvc.perform(post("/api/1/1/comment/2")
                         .param("comment", "Test reply")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -95,7 +95,7 @@ class CommentControllerTest {
         when(commentService.addComment(anyLong(), anyLong(), any(), anyString()))
                 .thenThrow(new FileDoesNotExist());
 
-        mockMvc.perform(post("/1/1/comment")
+        mockMvc.perform(post("/api/1/1/comment")
                         .param("comment", "Test comment")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -106,7 +106,7 @@ class CommentControllerTest {
         when(commentService.addComment(anyLong(), anyLong(), any(), anyString()))
                 .thenThrow(new UserNotInGroup());
 
-        mockMvc.perform(post("/1/1/comment")
+        mockMvc.perform(post("/api/1/1/comment")
                         .param("comment", "Test comment")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

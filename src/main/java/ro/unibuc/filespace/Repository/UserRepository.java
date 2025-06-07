@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface UserRepository extends  CrudRepository<User, Long>{
     Optional<User> findByUsername(String username);
 
-    @Query("SELECT g from User u JOIN Membership m ON m.user = u JOIN Group g on g =  m.group where u.userId = :id")
+    @Query("SELECT g from User u JOIN Membership m ON m.userId = u.userId JOIN Group g on g.groupId =  m.groupId where u.userId = :id")
     List<Group> findUserGroups(Long id);
 
 }

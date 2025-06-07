@@ -15,11 +15,11 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends CrudRepository<File, FileId> {
     @Transactional(readOnly = true)
-    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.file.fileId where f.fileName = :fileName and s.group.groupId = :groupId and s.file.isDeleted = false")
+    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.fileId where f.fileName = :fileName and s.groupId = :groupId and f.isDeleted = false")
     Optional<File> findByFileNameAndGroupId(long groupId, String fileName);
 
     @Transactional(readOnly = true)
-    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.file.fileId where f.fileId = :fileId and s.group.groupId = :groupId and s.file.isDeleted = false")
+    @Query("SELECT f from File f JOIN Storage s ON f.fileId = s.fileId where f.fileId = :fileId and s.groupId = :groupId and f.isDeleted = false")
     Optional<File> findByFileIdAndGroupId(long groupId, long fileId);
 
     @Transactional(readOnly = true)

@@ -14,7 +14,7 @@ import ro.unibuc.filespace.Model.Comment;
 public interface CommentRepository extends CrudRepository<Comment, Long> {
     @Modifying
     @Transactional
-    @Query("UPDATE Comment c SET c.comment = :content, c.updatedAt = CURRENT_TIMESTAMP WHERE c.commentId = :commentId AND c.commenter.userId = :userId")
+    @Query("UPDATE Comment c SET c.comment = :content, c.updatedAt = CURRENT_TIMESTAMP WHERE c.commentId = :commentId AND c.commenterId = :userId")
     int updateCommentContent(
             @Param("commentId") Long commentId,
             @Param("userId") Long userId,
@@ -22,9 +22,9 @@ public interface CommentRepository extends CrudRepository<Comment, Long> {
 
     @Query("""
                 SELECT c FROM Comment c
-                JOIN File f ON c.file.fileId = f.fileId
-                JOIN Storage s ON s.file = f
-                WHERE s.group.groupId = :groupId
+                JOIN File f ON c.fileId = f.fileId
+                JOIN Storage s ON s.fileId = f.fileId
+                WHERE s.groupId = :groupId
                   AND f.fileId = :fileId
             """)
     Page<Comment> getCommentThread(

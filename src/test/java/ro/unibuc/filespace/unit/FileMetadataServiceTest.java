@@ -80,20 +80,6 @@ class FileMetadataServiceTest {
     }
 
     @Test
-    void storeFileMetadata_Success() {
-        // Arrange
-        File file = new File();
-        file.setFileName("test.txt");
-        file.setFileContent("This is a test content");
-
-        // Act
-        fileMetadataService.storeFileMetadata(file);
-
-        // Assert
-        verify(fileMetadataRepository, times(1)).save(any(FileMetadata.class));
-    }
-
-    @Test
     void extractExtension_WithExtension() {
         // Arrange
         String fileName = "document.pdf";

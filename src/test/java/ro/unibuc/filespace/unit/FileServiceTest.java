@@ -55,7 +55,7 @@ public class FileServiceTest {
         Group group = new Group("testGroup");
         group.setGroupId(groupId);
 
-        File expectedFile = new File(fileName, user, "file content");
+        File expectedFile = new File(fileName, user.getUserId(), "file content");
 
         when(multipartFile.isEmpty()).thenReturn(false);
         when(multipartFile.getOriginalFilename()).thenReturn(fileName);
@@ -118,7 +118,7 @@ public class FileServiceTest {
         long groupId = 1L;
         String fileName = "testFile.txt";
         User user = new User(1L, "testUser", "password");
-        File file = new File(fileName, user, "file content");
+        File file = new File(fileName, user.getUserId(), "file content");
         file.setFileId(1L);
 
         when(groupService.getGroup(groupId)).thenReturn(Optional.of(new Group("testGroup")));
@@ -151,7 +151,7 @@ public class FileServiceTest {
         long groupId = 1L;
         String fileName = "testFile.txt";
         User user = new User(1L, "testUser", "password");
-        File expectedFile = new File(fileName, user, "file content");
+        File expectedFile = new File(fileName, user.getUserId(), "file content");
 
         when(userService.getAuthenticatedUser()).thenReturn(user);
         when(groupService.getUserFromGroup(groupId, user.getUserId())).thenReturn(Optional.of(user));
@@ -163,7 +163,7 @@ public class FileServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(fileName, result.get().getFileName());
-        assertEquals(user, result.get().getUser());
+        assertEquals(user.getUserId(), result.get().getUserId());
 
         verify(userService).getAuthenticatedUser();
         verify(groupService).getUserFromGroup(groupId, user.getUserId());

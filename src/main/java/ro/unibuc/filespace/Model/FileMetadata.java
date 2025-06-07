@@ -1,13 +1,8 @@
 package ro.unibuc.filespace.Model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -19,14 +14,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @IdClass(FileMetadataId.class)
 public class FileMetadata {
+
     @Id
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JsonIgnore
-    @JoinColumns({
-            @JoinColumn(name = "file_id", referencedColumnName = "file_id"),
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id")
-    })
-    private File file;
+    @Column(name = "file_id", nullable = false, updatable = false)
+    private Long fileId;
+
+    @Id
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private Long userId;
 
     @Column(name = "extension")
     private String extension;
@@ -41,8 +36,9 @@ public class FileMetadata {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public FileMetadata(File file, String extension, int sizeBytes, long crc32Checksum) {
-        this.file = file;
+    public FileMetadata(Long fileId, Long userId, String extension, int sizeBytes, long crc32Checksum) {
+        this.fileId = fileId;
+        this.userId = userId;
         this.extension = extension;
         this.sizeBytes = sizeBytes;
         this.crc32Checksum = crc32Checksum;

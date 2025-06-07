@@ -9,9 +9,9 @@ import java.util.List;
 
 @Repository
 public interface GroupTagRepository extends CrudRepository<GroupTag, GroupTagId> {
-    @Query("SELECT g.tag from GroupTag g where g.group.groupId = :groupId")
+    @Query("SELECT t from GroupTag g, Tag t where g.groupId = :groupId and g.tagId = t.tagId")
     List<Tag> getTagsInGroup(long groupId);
 
-    @Query("SELECT g.tag from GroupTag g where g.group.groupId = :groupId and g.file.fileId = :fileId")
+    @Query("SELECT t from GroupTag g, Tag t where g.groupId = :groupId and g.fileId = :fileId and g.tagId = t.tagId")
     List<Tag> getFileTags(long groupId, long fileId);
 }

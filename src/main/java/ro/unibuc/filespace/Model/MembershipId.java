@@ -1,15 +1,15 @@
 package ro.unibuc.filespace.Model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@AllArgsConstructor
+@EqualsAndHashCode
 @NoArgsConstructor
-@Data
+@AllArgsConstructor
 public class MembershipId implements Serializable {
-    private Group group;
-    private User user;
+    private Long groupId;
+    private Long userId;
 }

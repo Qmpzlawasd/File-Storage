@@ -11,9 +11,9 @@ import java.util.List;
 
 @Repository
 public interface MembershipRepository extends CrudRepository<Membership, MembershipId> {
-    @Query("SELECT m.user from Membership m where m.group.groupId = :groupId")
+    @Query("SELECT u from Membership m, User u where u.userId = m.userId  and m.groupId = :groupId")
     List<User> getUsersInGroup(long groupId);
 
-    @Query("SELECT m.group from Membership m where m.user.userId = :userId")
+    @Query("SELECT g from Membership m , Group g where g.groupId = m.groupId and  m.userId = :userId")
     List<Group> getGroupsFromUser(long userId);
 }

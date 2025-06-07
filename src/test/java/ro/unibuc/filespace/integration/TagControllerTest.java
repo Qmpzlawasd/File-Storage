@@ -59,7 +59,7 @@ public class TagControllerTest {
         when(tagService.addTag(eq(groupId), eq(fileId), anyString())).thenReturn(testTag);
 
         // Act & Assert
-        mockMvc.perform(post("/{groupId}/{fileId}/tag", groupId, fileId)
+        mockMvc.perform(post("/api/{groupId}/{fileId}/tag", groupId, fileId)
                         .param("tagName", tagName)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -72,7 +72,7 @@ public class TagControllerTest {
         when(tagService.addTag(eq(groupId), eq(fileId), anyString())).thenThrow(new FileDoesNotExist());
 
         // Act & Assert
-        mockMvc.perform(post("/{groupId}/{fileId}/tag", groupId, fileId)
+        mockMvc.perform(post("/api/{groupId}/{fileId}/tag", groupId, fileId)
                         .param("tagName", tagName)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -84,7 +84,7 @@ public class TagControllerTest {
         when(tagService.addTag(eq(groupId), eq(fileId), anyString())).thenThrow(new UserNotInGroup());
 
         // Act & Assert
-        mockMvc.perform(post("/{groupId}/{fileId}/tag", groupId, fileId)
+        mockMvc.perform(post("/api/{groupId}/{fileId}/tag", groupId, fileId)
                         .param("tagName", tagName)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -97,7 +97,7 @@ public class TagControllerTest {
         when(tagService.getFileTags(groupId, fileId)).thenReturn(tags);
 
         // Act & Assert
-        mockMvc.perform(get("/{groupId}/{fileId}/tags", groupId, fileId)
+        mockMvc.perform(get("/api/{groupId}/{fileId}/tags", groupId, fileId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tagName").value(tagName));
@@ -109,7 +109,7 @@ public class TagControllerTest {
         when(tagService.getFileTags(groupId, fileId)).thenThrow(new FileDoesNotExist());
 
         // Act & Assert
-        mockMvc.perform(get("/{groupId}/{fileId}/tags", groupId, fileId)
+        mockMvc.perform(get("/api/{groupId}/{fileId}/tags", groupId, fileId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -121,7 +121,7 @@ public class TagControllerTest {
         when(tagService.getGroupTags(groupId)).thenReturn(tags);
 
         // Act & Assert
-        mockMvc.perform(get("/{groupId}/tags", groupId)
+        mockMvc.perform(get("/api/{groupId}/tags", groupId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].tagName").value(tagName));
@@ -133,7 +133,7 @@ public class TagControllerTest {
         when(tagService.getGroupTags(groupId)).thenThrow(new UserNotInGroup());
 
         // Act & Assert
-        mockMvc.perform(get("/{groupId}/tags", groupId)
+        mockMvc.perform(get("/api/{groupId}/tags", groupId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

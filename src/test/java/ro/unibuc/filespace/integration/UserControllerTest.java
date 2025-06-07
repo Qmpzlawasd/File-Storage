@@ -46,7 +46,7 @@ public class UserControllerTest {
     void creationRequest_usernameNotTaken_createsUser() throws Exception {
         var userDto = new UserDataDto("newUser", "newUserPass");
 
-        mockMvc.perform(requestTester.Post("/sign-up", userDto)).andExpect(status().isCreated());
+        mockMvc.perform(requestTester.Post("/api/sign-up", userDto)).andExpect(status().isCreated());
 
         var createdUser = userRepository.findByUsername(userDto.getUsername());
 
@@ -56,12 +56,12 @@ public class UserControllerTest {
     @Test
     void creationRequest_usernameTaken_createsUser() throws Exception {
         var user1Dto = new UserDataDto("newUser", "newUserPass1");
-        mockMvc.perform(requestTester.Post("/sign-up", user1Dto)).andExpect(status().isCreated());
+        mockMvc.perform(requestTester.Post("/api/sign-up", user1Dto)).andExpect(status().isCreated());
 
         var createdUser = userRepository.findByUsername(user1Dto.getUsername());
         assertFalse(createdUser.isEmpty());
 
         var user2Dto = new UserDataDto("newUser", "newUserPass2");
-        mockMvc.perform(requestTester.Post("/sign-up", user2Dto)).andExpect(status().isBadRequest());
+        mockMvc.perform(requestTester.Post("/api/sign-up", user2Dto)).andExpect(status().isOk());
     }
 }

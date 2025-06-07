@@ -20,7 +20,7 @@ public class MembershipService {
     private final MembershipRepository  membershipRepository;
 
     public void createMembership(Group group, User user) {
-        membershipRepository.save(new Membership(group, user));
+        membershipRepository.save(new Membership(group.getGroupId(), user.getUserId()));
     }
 
     public List<User> getUsersInGroup(long groupId) {

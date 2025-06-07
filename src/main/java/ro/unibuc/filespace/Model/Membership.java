@@ -1,4 +1,5 @@
 package ro.unibuc.filespace.Model;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,13 +16,12 @@ import org.hibernate.annotations.DynamicInsert;
 @DynamicInsert
 @IdClass(MembershipId.class)
 public class Membership {
-    @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
 
     @Id
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "group_id", nullable = false)
+    private Long groupId;
+
+    @Id
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 }

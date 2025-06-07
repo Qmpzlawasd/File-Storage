@@ -34,7 +34,7 @@ public class FileMetadataService {
         long checksum = computeCRC32Checksum(fileContent.getBytes());
 
         log.info("Storing metadata for file: {}", fileName);
-        fileMetadataRepository.save(new FileMetadata(file, extension, size, checksum));
+        fileMetadataRepository.save(new FileMetadata(file.getFileId(),file.getUserId(), extension, size, checksum));
     }
 
     public String extractExtension(String fileName) {

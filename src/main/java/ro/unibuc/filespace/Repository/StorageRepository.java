@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface StorageRepository extends CrudRepository<Storage, StorageId> {
-    @Query("select s.file from Storage s where s.group = :group and s.file.isDeleted = false")
-    List<File> findFilesByGroup(Group group);
+    @Query("select f from Storage s , File f where s.groupId = :groupId and s.fileId = f.fileId and f.isDeleted = false")
+    List<File> findFilesByGroup(Long groupId);
 }

@@ -28,15 +28,6 @@ public class Tag {
     @Column(name = "tagName", nullable = false)
     private String tagName;
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "GROUP_TAG", joinColumns = {@JoinColumn(name = "tag_id")}, inverseJoinColumns = {
-            @JoinColumn(name = "file_id", referencedColumnName = "file_id"),
-            @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
-            @JoinColumn(name = "groupId", referencedColumnName = "groupId")
-    })
-    private Set<GroupTag> files = new HashSet<>();
-
     public Tag(String tagName) {
         this.tagName = tagName;
     }

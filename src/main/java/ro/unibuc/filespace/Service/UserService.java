@@ -25,6 +25,10 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public User getUser(Long userId) throws UserDoesNotExist {
+        return userRepository.findById(userId).orElseThrow(UserDoesNotExist::new);
+    }
+
     public User createUser(String username, String password) throws UserAlreadyExists {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new UserAlreadyExists();
