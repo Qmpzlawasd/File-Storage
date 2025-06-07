@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Files in Group</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h1>Files in Group</h1>
+    <a href="/groups" class="btn btn-secondary mb-3">Back to Groups</a>
+
+    <!-- Upload File Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5>Upload New File</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/upload-file/{groupId}(groupId=${groupId})}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Select File</label>
+                    <input class="form-control" type="file" id="file" name="file" required>
+                </div>
+                <button type="submit" class="btn btn-success">Upload File</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Files Table -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>File ID</th>
+            <th>File Name</th>
+            <th>Owner</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="file : ${files}">
+            <td th:text="${file.fileId}"></td>
+            <td th:text="${file.fileName}"></td>
+            <td th:text="${file.user.username}"></td>
+            <td>
+<!--                <a th:href="@{/download/{fileId}(fileId=${file.fileId})}" class="btn btn-primary">Download</a>-->
+                <a th:href="@{/delete-file/{groupId}/{filename}(groupId=${groupId}, filename=${file.fileName})}" class="btn btn-danger ms-2">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

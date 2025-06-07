@@ -1,0 +1,7 @@
+    private String extension;
+
+    @Column(name = "sizeBytes", nullable = false)
+    private int sizeBytes;
+
+    @Column(name = "crc32_checksum", nullable = false)
+    private long crc32Checksum;
