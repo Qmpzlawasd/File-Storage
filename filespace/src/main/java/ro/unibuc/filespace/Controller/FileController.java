@@ -39,7 +39,7 @@ public class FileController {
         File file = fileService.storeFile(groupId, file1);
         FileRequestDto fileRequestDto = new FileRequestDto(file.getUserId(),file.getFileId(), file.getFileName(), file.getFileContent());
         ResponseEntity<FileMetadataResult> response = restTemplate.postForEntity(
-                "http://filemetadata/api/metadata",
+                "http://FILEMETADATA/api/metadata",
                 fileRequestDto,
                 FileMetadataResult.class
         );
