@@ -1,4 +1,4 @@
-package ro.unibuc.filespace.Dto;
+package ro.unibuc.filemetadata.Dto;
 
 import lombok.*;
 

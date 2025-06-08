@@ -97,15 +97,17 @@ public class AuthConfig {
                                 "/v3/api-docs",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "swagger-ui.html",
+                                "/swagger-ui.html",
                                 "/swagger-resources",
                                 "/swagger-resources/**",
                                 "/configuration/ui",
                                 "/configuration/security",
                                 "/webjars/**",
+                                "/actuator/**",
                                 "/api/v1/auth/**"
                         ).permitAll()
                         .anyRequest().permitAll()
+
                 )
                 .csrf((csrf) -> csrf.ignoringRequestMatchers("/api/login", "/login", "/logout", "/sign-up", "/api/sign-up"))
                 .httpBasic(Customizer.withDefaults())

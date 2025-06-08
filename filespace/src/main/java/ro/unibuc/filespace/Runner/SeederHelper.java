@@ -103,7 +103,7 @@ public class SeederHelper {
 
     void storeFileMetadata(File file) {
         FileRequestDto fileRequestDto = new FileRequestDto(file.getUserId(),file.getFileId(), file.getFileName(), file.getFileContent());
-        restTemplate.postForObject("http://localhost:8081/api/metadata", fileRequestDto, Void.class);
+        restTemplate.postForObject("http://filemetadata/api/metadata", fileRequestDto, Void.class);
     }
 
     void fill100FilesComments(Group group) throws FileIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists, FileDoesNotExist, CommentIsEmpty, CommentDoesNotExist, InterruptedException {

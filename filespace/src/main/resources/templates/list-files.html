@@ -32,7 +32,6 @@
         <tr>
             <th>File ID</th>
             <th>File Name</th>
-            <th>Owner</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -40,7 +39,6 @@
         <tr th:each="file : ${files}">
             <td th:text="${file.fileId}"></td>
             <td th:text="${file.fileName}"></td>
-            <td th:text="${file.user.username}"></td>
             <td>
 <!--                <a th:href="@{/download/{fileId}(fileId=${file.fileId})}" class="btn btn-primary">Download</a>-->
                 <a th:href="@{/delete-file/{groupId}/{filename}(groupId=${groupId}, filename=${file.fileName})}" class="btn btn-danger ms-2">Delete</a>

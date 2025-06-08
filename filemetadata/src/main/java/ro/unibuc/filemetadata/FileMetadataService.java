@@ -19,7 +19,7 @@ public class FileMetadataService {
         return fileMetadataRepository.findById(fileId).orElseThrow(FileMetadataNotPresent::new);
     }
 
-    public void storeFileMetadata(FileRequestDto fileRequestDto) {
+    public FileMetadata storeFileMetadata(FileRequestDto fileRequestDto) {
         String fileName = fileRequestDto.getFileName();
         String fileContent = fileRequestDto.getFileContent();
 
@@ -28,7 +28,7 @@ public class FileMetadataService {
         long checksum = computeCRC32Checksum(fileContent.getBytes());
 
         log.info("Storing metadata for file: {}", fileName);
-        fileMetadataRepository.save(new FileMetadata(fileRequestDto.getFileId(),fileRequestDto.getUserId(), extension, size, checksum));
+        return fileMetadataRepository.save(new FileMetadata(fileRequestDto.getFileId(),fileRequestDto.getUserId(), extension, size, checksum));
     }
 
     public String extractExtension(String fileName) {
