@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'filespace'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['172.20.0.1:8080']
+        labels:
+          application: 'the space'
+  - job_name: 'filemetadata'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['172.20.0.1:8081']
+        labels:
+          application: 'the space'
