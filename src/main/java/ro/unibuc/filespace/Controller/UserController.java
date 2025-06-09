@@ -35,4 +35,5 @@ public class UserController {
             userService.createUser(createUserDto.getUsername(), createUserDto.getPassword());
             return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
 }

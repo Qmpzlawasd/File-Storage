@@ -1,4 +1,4 @@
-package ro.unibuc.filespace.Model;
+package ro.unibuc.comment;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

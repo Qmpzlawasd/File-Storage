@@ -1,5 +1,5 @@
 //
-//package ro.unibuc.filespace.Configuration;
+//package ro.unibuc.comment.Configuration;
 //
 //import jakarta.persistence.RollbackException;
 //import org.springframework.dao.DataIntegrityViolationException;

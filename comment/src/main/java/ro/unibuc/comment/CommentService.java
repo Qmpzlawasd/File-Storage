@@ -1,16 +1,14 @@
-package ro.unibuc.filespace.Service;
+package ro.unibuc.comment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ro.unibuc.filespace.Exception.CommentDoesNotExist;
-import ro.unibuc.filespace.Exception.CommentIsEmpty;
-import ro.unibuc.filespace.Exception.FileDoesNotExist;
-import ro.unibuc.filespace.Exception.UserNotInGroup;
-import ro.unibuc.filespace.Model.*;
-import ro.unibuc.filespace.Repository.CommentRepository;
+import org.springframework.web.client.RestTemplate;
+import ro.unibuc.comment.Dto.FileDTO;
+import ro.unibuc.comment.Dto.UserDTO;
+import ro.unibuc.comment.Exception.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -20,16 +18,23 @@ import java.util.Optional;
 @Slf4j
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final UserService userService;
-    private final FileService fileService;
+    private final RestTemplate restTemplate;
 
     public Comment addComment(Long groupId, Long fileId, Long parentId, String commentContent) throws FileDoesNotExist, UserNotInGroup, CommentIsEmpty {
         if (commentContent == null || commentContent.trim().isEmpty()) {
             throw new CommentIsEmpty();
         }
 
-        File file = fileService.getFileFromGroupById(groupId, fileId)
-                .orElseThrow(FileDoesNotExist::new);
+
+        FileDTO file = restTemplate.getForEntity(
+                "http://FILESPACE/api/{groupId}/files/{fileId}",
+                FileDTO.class,
+                groupId,
+                fileId
+        ).getBody();
+        if (file == null) {
+            throw new FileDoesNotExist();
+        }
 
         if (parentId != null) {
             Optional<Comment> parentComment = commentRepository.findById(parentId);
@@ -37,11 +42,22 @@ public class CommentService {
                 throw new IllegalArgumentException("Parent comment doesn't exist or doesn't belong to this file");
             }
         }
+
+
+        UserDTO thisUser = restTemplate.getForEntity(
+                "http://FILESPACE//api/users/authenticated",
+                UserDTO.class
+        ).getBody();
+        if (thisUser == null) {
+            throw new UserDoesNotExist();
+        }
+
+
         Comment comment = new Comment(
                 commentContent,
                 file.getFileId(),
                 file.getUserId(),
-                userService.getAuthenticatedUser().getUserId(),
+                thisUser.getUserId(),
                 parentId,
                 LocalDateTime.now()
         );
@@ -59,10 +75,24 @@ public class CommentService {
             throw new CommentIsEmpty();
         }
 
-        File file = fileService.getFileFromGroupById(groupId, fileId)
-                .orElseThrow(FileDoesNotExist::new);
+        FileDTO file = restTemplate.getForEntity(
+                "http://FILESPACE/api/{groupId}/files/{fileId}",
+                FileDTO.class,
+                groupId,
+                fileId
+        ).getBody();
+        if (file == null) {
+            throw new FileDoesNotExist();
+        }
 
-        User thisUser = userService.getAuthenticatedUser();
+        UserDTO thisUser = restTemplate.getForEntity(
+                "http://FILESPACE//api/users/authenticated",
+                UserDTO.class
+        ).getBody();
+        if (thisUser == null) {
+            throw new UserDoesNotExist();
+        }
+
         Comment comment = commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
         if (!comment.getCommenterId().equals(thisUser.getUserId())) {
             throw new CommentDoesNotExist();
@@ -76,8 +106,16 @@ public class CommentService {
         return commentRepository.findById(commentId).orElseThrow(CommentDoesNotExist::new);
     }
 
-    public Page<Comment> getComments(long groupId, long fileId, Pageable pageable) throws FileDoesNotExist, UserNotInGroup {
-        fileService.getFileFromGroupById(groupId, fileId).orElseThrow(FileDoesNotExist::new);
-        return commentRepository.getCommentThread(groupId, fileId, pageable);
+    public Page<Comment> getComments(long groupId, long fileId, Pageable pageable) throws FileDoesNotExist {
+        FileDTO file = restTemplate.getForEntity(
+                "http://FILESPACE/api/{groupId}/files/{fileId}",
+                FileDTO.class,
+                groupId,
+                fileId
+        ).getBody();
+        if (file == null) {
+            throw new FileDoesNotExist();
+        }
+        return commentRepository.getCommentThread(fileId, pageable);
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ro.unibuc.filespace.Dto.UserDTO;
 import ro.unibuc.filespace.Dto.UserDataDto;
 import ro.unibuc.filespace.Exception.UserAlreadyExists;
 import ro.unibuc.filespace.Exception.UserDoesNotExist;
@@ -70,5 +71,26 @@ public class UserService {
 
     public List<Group> getGroups() throws UserDoesNotExist {
         return userRepository.findUserGroups(this.getAuthenticatedUser().getUserId());
+    }
+    public UserDTO getUserDtoById(Long userId) throws UserDoesNotExist {
+        User user = userRepository.findById(userId)
+                .orElseThrow((UserDoesNotExist::new));
+
+        return UserDTO.builder()
+                .userId(user.getUserId())
+                .username(user.getUsername())
+                // Add other necessary fields
+                .build();
+    }
+
+    public UserDTO getAuthenticatedUserDto() throws UserDoesNotExist {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow((UserDoesNotExist::new));
+
+        return UserDTO.builder()
+                .username(user.getUsername())
+                .userId(user.getUserId())
+                .build();
     }
 }
