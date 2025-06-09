@@ -19,6 +19,7 @@ import ro.unibuc.filespace.Exception.UserNotInGroup;
 import ro.unibuc.filespace.Model.File;
 import ro.unibuc.filespace.Service.FileService;
 import ro.unibuc.filespace.Service.StorageService;
+import ro.unibuc.filespace.Service.UserService;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,16 +29,19 @@ import java.util.List;
 @RestController
 public class FileController {
     private final FileService fileService;
+
     private final StorageService storageService;
-//    private final FileMetadataService fileMetadataService;
+
     private final RestTemplate restTemplate;
+
+    private final UserService userService;
 
 
     @RequestMapping(value = "/api/{groupId}/upload", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> uploadFile(@PathVariable long groupId, @RequestParam("file") MultipartFile file1) throws FileIsEmpty, UserNotInGroup, FileWithNameAlreadyExists, IOException {
         File file = fileService.storeFile(groupId, file1);
-        FileRequestDto fileRequestDto = new FileRequestDto(file.getUserId(),file.getFileId(), file.getFileName(), file.getFileContent());
+        FileRequestDto fileRequestDto = new FileRequestDto(file.getFileId(), userService.getAuthenticatedUser().getUserId(),file.getFileName(), file.getFileContent());
         ResponseEntity<FileMetadataResult> response = restTemplate.postForEntity(
                 "http://FILEMETADATA/api/metadata",
                 fileRequestDto,

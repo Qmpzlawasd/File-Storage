@@ -3,6 +3,7 @@ package ro.unibuc.filespace.Runner;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +29,13 @@ import java.util.List;
 @Component
 public class SeederHelper {
     private final UserService userService;
+
     private final GroupService groupService;
+
     private final FileService fileService;
 
-//    private final FileMetadataService fileMetadataService;
-    private final RestTemplate  restTemplate;
+    private final RestTemplate restTemplate;
+
     private final CommentService commentService;
 
     User createUser(String username, String password) throws UserAlreadyExists {
@@ -102,8 +105,12 @@ public class SeederHelper {
     }
 
     void storeFileMetadata(File file) {
-        FileRequestDto fileRequestDto = new FileRequestDto(file.getUserId(),file.getFileId(), file.getFileName(), file.getFileContent());
-        restTemplate.postForObject("http://filemetadata/api/metadata", fileRequestDto, Void.class);
+        FileRequestDto fileRequestDto = new FileRequestDto(file.getUserId(), file.getFileId(), file.getFileName(), file.getFileContent());
+        ResponseEntity<FileMetadataResult> response = restTemplate.postForEntity(
+                "http://FILEMETADATA/api/metadata",
+                fileRequestDto,
+                FileMetadataResult.class
+        );
     }
 
     void fill100FilesComments(Group group) throws FileIsEmpty, IOException, UserNotInGroup, FileWithNameAlreadyExists, FileDoesNotExist, CommentIsEmpty, CommentDoesNotExist, InterruptedException {
